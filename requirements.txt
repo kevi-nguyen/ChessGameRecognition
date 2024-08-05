@@ -1,0 +1,9 @@
+opencv-python
+opencv-python-headless
+python-chess
+stockfish
+fastapi
+uvicorn
+numpy
+requests
+chess
