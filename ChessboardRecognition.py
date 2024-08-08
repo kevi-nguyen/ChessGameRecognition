@@ -12,6 +12,22 @@ class ChessboardRecognition:
         # Convert the cell coordinates to chess notation
         return chr(cell[1] + ord('a')) + str(8 - cell[0])
 
+    def chess_to_cell_notation(self, move_str):
+        """
+        Converts a move string to a tuple.
+
+        Parameters:
+        - move_str: String representing the move, e.g., 'e2e4'.
+
+        Returns:
+        - Tuple representing the move in the format ((start_row, start_col), (end_row, end_col)).
+        """
+        start_col = ord(move_str[0]) - ord('a')
+        start_row = 8 - int(move_str[1])
+        end_col = ord(move_str[2]) - ord('a')
+        end_row = 8 - int(move_str[3])
+        return ((start_row, start_col), (end_row, end_col))
+
     def transform_image(self):
         # Define the pixel coordinates of the four corners of the chessboard in the distorted image
         src_points = np.float32([[375, 760], [2530, 726], [325, 2957], [2625, 2936]])
@@ -23,9 +39,7 @@ class ChessboardRecognition:
         matrix = cv2.getPerspectiveTransform(src_points, dst_points)
 
         # Apply the perspective transformation to the image
-        corrected_image = cv2.warpPerspective(self.image, matrix,
-                                              (3024, 4032))  # Adjust the size according to your setup
-
+        corrected_image = cv2.warpPerspective(self.image, matrix, (3024, 4032))
         return corrected_image
 
     def get_board_state(self, image):
@@ -35,11 +49,14 @@ class ChessboardRecognition:
         # Convert the blurred image to the HSV color space
         hsv = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
+        # Apply histogram equalization to the V channel
+        hsv[:, :, 2] = cv2.equalizeHist(hsv[:, :, 2])
+
         # Define a wider color range for red
-        lower_red1 = np.array([0, 100, 100])  # Adjust these values
-        upper_red1 = np.array([10, 255, 255])  # Adjust these values
-        lower_red2 = np.array([160, 100, 100])  # Adjust these values
-        upper_red2 = np.array([180, 255, 255])  # Adjust these values
+        lower_red1 = np.array([0, 100, 100])
+        upper_red1 = np.array([10, 255, 255])
+        lower_red2 = np.array([160, 100, 100])
+        upper_red2 = np.array([180, 255, 255])
 
         # Threshold the HSV image to get only red colors
         red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
@@ -60,7 +77,7 @@ class ChessboardRecognition:
         res = cv2.bitwise_and(image, image, mask=combined_mask)
 
         # Calculate the size of each cell in pixels
-        cell_size = (3024 // 8, 4032 // 8)  # Assuming an 8x8 chessboard
+        cell_size = (3024 // 8, 4032 // 8)
 
         # Define an empty 2D array to hold the board state
         board_state = [[None for _ in range(8)] for _ in range(8)]
@@ -81,9 +98,9 @@ class ChessboardRecognition:
                 cv2.line(res, (x1, y2), (x2, y2), (0, 255, 0), 2)  # Bottom line
 
                 # Get the color of the piece in the cell
-                if cv2.countNonZero(blue_mask[y1:y2, x1:x2]) > 50:  # Adjust the threshold as needed
+                if cv2.countNonZero(blue_mask[y1:y2, x1:x2]) > 50:
                     board_state[i][j] = 'blue'
-                elif cv2.countNonZero(red_mask[y1:y2, x1:x2]) > 50:  # Adjust the threshold as needed
+                elif cv2.countNonZero(red_mask[y1:y2, x1:x2]) > 50:
                     board_state[i][j] = 'red'
 
         # Display the image with cell lines
@@ -91,12 +108,20 @@ class ChessboardRecognition:
 
         return board_state
 
-    def find_moved_piece(self, prev_state):
-        # Get the new state of the board
-        curr_state = self.get_board_state(self.transform_image())
+    def find_moved_piece(self, prev_state, curr_state):
+        """
+        Finds the moved piece by comparing the previous and current board states.
+
+        Parameters:
+        - prev_state: 2D list representing the previous state of the board.
+        - curr_state: 2D list representing the current state of the board.
+
+        Returns:
+        - Tuple containing the move in UCI format and the piece that was moved.
+        """
 
         # Initialize the start and end positions
-        start = end = None
+        start = end = second_start = None
 
         # Iterate over the cells of the chessboard to find the start position
         for i in range(len(prev_state)):
@@ -104,7 +129,10 @@ class ChessboardRecognition:
                 # If the cell contains a piece in the old state but is empty in the new state, it is the start position
                 if prev_state[i][j] is not None and (
                         curr_state[i][j] is None or curr_state[i][j] != prev_state[i][j]):
-                    start = self.cell_to_chess_notation((i, j))
+                    if start is None:
+                        start = self.cell_to_chess_notation((i, j))
+                    else:
+                        second_start = self.cell_to_chess_notation((i, j))
                     break
             if start is not None:
                 break
@@ -120,11 +148,58 @@ class ChessboardRecognition:
             if end is not None:
                 break
 
+        # Handle special cases
+        if start and end:
+            # Castling
+            if second_start:
+                if prev_state[7][4] == 'red' and prev_state[7][7] == 'red' and curr_state[7][4] is None and \
+                        curr_state[7][7] is None:
+                    if curr_state[7][6] == 'red' and curr_state[7][5] == 'red':
+                        return 'e1g1', 'red'  # Kingside castling
+                    elif curr_state[7][2] == 'red' and curr_state[7][3] == 'red':
+                        return 'e1c1', 'red'  # Queenside castling
+                if prev_state[0][4] == 'blue' and prev_state[0][7] == 'blue' and curr_state[0][4] is None and \
+                        curr_state[0][7] is None:
+                    if curr_state[0][6] == 'blue' and curr_state[0][5] == 'blue':
+                        return 'e8g8', 'blue'  # Kingside castling
+                    elif curr_state[0][2] == 'blue' and curr_state[0][3] == 'blue':
+                        return 'e8c8', 'blue'  # Queenside castling
+
+            # En passant
+            if prev_state[3][4] == 'red' and curr_state[2][4] == 'red' and curr_state[3][4] is None:
+                return 'e5d6', 'red'  # En passant capture
+            if prev_state[4][4] == 'blue' and curr_state[5][4] == 'blue' and curr_state[4][4] is None:
+                return 'e4d3', 'blue'  # En passant capture
+
         # If both the start and end positions have been found, return the move in UCI format
         if start is not None and end is not None:
             return start + end, prev_state[ord(start[0]) - ord('a')][8 - int(start[1])]
 
         return None, None
+
+    def update_board_state(self, board_state, move):
+        """
+        Updates the board state manually after a move.
+
+        Parameters:
+        - board_state: 2D list representing the current state of the board.
+        - move: Tuple representing the move in the format ((start_row, start_col), (end_row, end_col)).
+
+        Returns:
+        - Updated board state after the move.
+        """
+        start_pos, end_pos = move
+        start_row, start_col = start_pos
+        end_row, end_col = end_pos
+
+        # Get the piece at the start position
+        piece = board_state[start_row][start_col]
+
+        # Move the piece to the end position
+        board_state[end_row][end_col] = piece
+        board_state[start_row][start_col] = None
+
+        return board_state
 
     def get_board_state_from_stream(self):
         while True:
