@@ -21,7 +21,7 @@ class Chessboard:
         # Return the FEN string of the current board state
         return self.board.fen()
 
-    def display_move(move, piece):
+    def display_move(self, move, piece):
         # Castling moves
         if move in ["e1g1", "e1c1", "e8g8", "e8c8"]:
             if move == "e1g1" or move == "e8g8":
