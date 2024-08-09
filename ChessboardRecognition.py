@@ -123,6 +123,9 @@ class ChessboardRecognition:
         # Initialize the start and end positions
         start = end = second_start = None
 
+        # Variables for the colours of the start and end positions to handle en passant
+        start_colour = second_start_colour = end_colour = None
+
         # Iterate over the cells of the chessboard to find the start position
         for i in range(len(prev_state)):
             for j in range(len(prev_state[i])):
@@ -131,8 +134,10 @@ class ChessboardRecognition:
                         curr_state[i][j] is None or curr_state[i][j] != prev_state[i][j]):
                     if start is None:
                         start = self.cell_to_chess_notation((i, j))
+                        start_colour = 'red' if prev_state[i][j] == 'red' else 'blue'
                     else:
                         second_start = self.cell_to_chess_notation((i, j))
+                        second_start_colour = 'red' if prev_state[i][j] == 'red' else 'blue'
                     break
             if start is not None:
                 break
@@ -144,6 +149,7 @@ class ChessboardRecognition:
                 if curr_state[i][j] is not None and (
                         prev_state[i][j] is None or curr_state[i][j] != prev_state[i][j]):
                     end = self.cell_to_chess_notation((i, j))
+                    end_colour = 'red' if curr_state[i][j] == 'red' else 'blue'
                     break
             if end is not None:
                 break
@@ -165,14 +171,14 @@ class ChessboardRecognition:
                     elif curr_state[0][2] == 'blue' and curr_state[0][3] == 'blue':
                         return 'e8c8', 'blue'  # Queenside castling
 
-            # En passant
-            if prev_state[3][4] == 'red' and curr_state[2][4] == 'red' and curr_state[3][4] is None:
-                return 'e5d6', 'red'  # En passant capture
-            if prev_state[4][4] == 'blue' and curr_state[5][4] == 'blue' and curr_state[4][4] is None:
-                return 'e4d3', 'blue'  # En passant capture
+                # En passant
+                if start_colour == end_colour:
+                    correct_start = start
+                else:
+                    correct_start = second_start
 
-        # If both the start and end positions have been found, return the move in UCI format
-        if start is not None and end is not None:
+                return correct_start + end, prev_state[ord(correct_start[0]) - ord('a')][8 - int(correct_start[1])]
+
             return start + end, prev_state[ord(start[0]) - ord('a')][8 - int(start[1])]
 
         return None, None
@@ -233,4 +239,3 @@ class ChessboardRecognition:
 
         # Closes all the frames
         cv2.destroyAllWindows()
-
