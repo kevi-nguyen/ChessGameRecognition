@@ -130,16 +130,14 @@ class ChessboardRecognition:
         for i in range(len(prev_state)):
             for j in range(len(prev_state[i])):
                 # If the cell contains a piece in the old state but is empty in the new state, it is the start position
-                if prev_state[i][j] is not None and (
-                        curr_state[i][j] is None or curr_state[i][j] != prev_state[i][j]):
+                if prev_state[i][j] is not None and curr_state[i][j] is None:
                     if start is None:
                         start = self.cell_to_chess_notation((i, j))
                         start_colour = 'red' if prev_state[i][j] == 'red' else 'blue'
                     else:
                         second_start = self.cell_to_chess_notation((i, j))
                         second_start_colour = 'red' if prev_state[i][j] == 'red' else 'blue'
-                    break
-            if start is not None:
+            if start is not None and second_start is not None:
                 break
 
         # Iterate over the cells of the chessboard to find the end position
@@ -157,19 +155,24 @@ class ChessboardRecognition:
         # Handle special cases
         if start and end:
             # Castling
-            if second_start:
-                if prev_state[7][4] == 'red' and prev_state[7][7] == 'red' and curr_state[7][4] is None and \
-                        curr_state[7][7] is None:
-                    if curr_state[7][6] == 'red' and curr_state[7][5] == 'red':
-                        return 'e1g1', 'red'  # Kingside castling
-                    elif curr_state[7][2] == 'red' and curr_state[7][3] == 'red':
-                        return 'e1c1', 'red'  # Queenside castling
-                if prev_state[0][4] == 'blue' and prev_state[0][7] == 'blue' and curr_state[0][4] is None and \
-                        curr_state[0][7] is None:
-                    if curr_state[0][6] == 'blue' and curr_state[0][5] == 'blue':
-                        return 'e8g8', 'blue'  # Kingside castling
-                    elif curr_state[0][2] == 'blue' and curr_state[0][3] == 'blue':
-                        return 'e8c8', 'blue'  # Queenside castling
+            if start and end:
+                # Castling
+                if second_start:
+                    # Check for blue castling (blue is on the 7th rank)
+                    if prev_state[7][4] == 'blue' and prev_state[7][7] == 'blue' and curr_state[7][4] is None and \
+                            curr_state[7][7] is None and curr_state[7][6] == 'blue' and curr_state[7][5] == 'blue':
+                        return 'e1g1', 'blue'  # Kingside castling
+                    elif prev_state[7][4] == 'blue' and prev_state[7][0] == 'blue' and curr_state[7][4] is None and \
+                            curr_state[7][0] is None and curr_state[7][2] == 'blue' and curr_state[7][3] == 'blue':
+                        return 'e1c1', 'blue'  # Queenside castling
+
+                    # Check for red castling (red is on the 0th rank)
+                    if prev_state[0][4] == 'red' and prev_state[0][7] == 'red' and curr_state[0][4] is None and \
+                            curr_state[0][7] is None and curr_state[0][6] == 'red' and curr_state[0][5] == 'red':
+                        return 'e8g8', 'red'  # Kingside castling
+                    elif prev_state[0][4] == 'red' and prev_state[0][0] == 'red' and curr_state[0][4] is None and \
+                            curr_state[0][0] is None and curr_state[0][2] == 'red' and curr_state[0][3] == 'red':
+                        return 'e8c8', 'red'  # Queenside castling
 
                 # En passant
                 if start_colour == end_colour:
