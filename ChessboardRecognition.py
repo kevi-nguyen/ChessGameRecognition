@@ -183,7 +183,7 @@ class ChessboardRecognition:
 
         return None, None
 
-    def update_board_state(self, board_state, move):
+    def update_board_state(self, board_state, move, special):
         """
         Updates the board state manually after a move.
 
@@ -201,9 +201,50 @@ class ChessboardRecognition:
         # Get the piece at the start position
         piece = board_state[start_row][start_col]
 
-        # Move the piece to the end position
-        board_state[end_row][end_col] = piece
-        board_state[start_row][start_col] = None
+        if special:
+            # Handle castling
+            if piece == 'blue' and start_pos == (7, 4) and end_pos in [(7, 6), (7, 2)]:
+                # Kingside castling
+                if end_pos == (7, 6):
+                    board_state[7][4] = None
+                    board_state[7][6] = 'blue'
+                    board_state[7][7] = None
+                    board_state[7][5] = 'blue'
+                # Queenside castling
+                elif end_pos == (7, 2):
+                    board_state[7][4] = None
+                    board_state[7][2] = 'blue'
+                    board_state[7][0] = None
+                    board_state[7][3] = 'blue'
+            elif piece == 'red' and start_pos == (0, 4) and end_pos in [(0, 6), (0, 2)]:
+                # Kingside castling
+                if end_pos == (0, 6):
+                    board_state[0][4] = None
+                    board_state[0][6] = 'red'
+                    board_state[0][7] = None
+                    board_state[0][5] = 'red'
+                # Queenside castling
+                elif end_pos == (0, 2):
+                    board_state[0][4] = None
+                    board_state[0][2] = 'red'
+                    board_state[0][0] = None
+                    board_state[0][3] = 'red'
+
+            # Handle en passant
+            if piece == 'blue' and start_row == 3 and end_row == 2 and board_state[end_row][
+                end_col] is None and start_col != end_col:
+                board_state[start_row][start_col] = None
+                board_state[end_row][end_col] = 'blue'
+                board_state[start_row][end_col] = None
+            elif piece == 'red' and start_row == 4 and end_row == 5 and board_state[end_row][
+                end_col] is None and start_col != end_col:
+                board_state[start_row][start_col] = None
+                board_state[end_row][end_col] = 'red'
+                board_state[start_row][end_col] = None
+        else:
+            # Normal move
+            board_state[end_row][end_col] = piece
+            board_state[start_row][start_col] = None
 
         return board_state
 
