@@ -33,3 +33,21 @@ class Chessboard:
             print("En Passant")
         else:
             print(f"Move: {move}")
+
+    def is_special_move(self, move):
+        """
+        Check if the move is a special move (castling or en passant).
+
+        Parameters:
+        - move: String representing the move in UCI format, e.g., 'e1g1'.
+
+        Returns:
+        - Boolean indicating if the move is a special move.
+        """
+        uci_move = chess.Move.from_uci(move)
+        if uci_move in self.board.legal_moves:
+            if self.board.is_castling(uci_move):
+                return True
+            if self.board.is_en_passant(uci_move):
+                return True
+        return False
