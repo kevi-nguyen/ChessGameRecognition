@@ -1,3 +1,5 @@
+import copy
+
 from ChessboardRecognition import ChessboardRecognition
 from Chessboard import Chessboard
 import cv2
@@ -32,13 +34,30 @@ if __name__ == '__main__':
         # Check if the 'q' key is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
 
-            # Get the current board state
-            current_board_state = chessboard_recognition.get_board_state(transformed_image)
+            # Get user input for the move
+            user_input = input("Enter your move (e.g., 'd2d4') or 'no' to skip: ").strip()
 
-            #current_board_state = simulate_move(current_board_state, ((6, 4), (4, 4)))
+            if user_input.lower() == 'no':
+                print("No move made.")
+                continue
+
+            # Create a copy of the initial board state for the current move
+            current_board_state = copy.deepcopy(initial_board_state)
+
+            special = chessboard.is_special_move(user_input)
+
+            chessboard_recognition.update_board_state(current_board_state,
+                                                      chessboard_recognition.chess_to_cell_notation(user_input), special)
+
+            for row in current_board_state:
+                print(row)
+
+            for row in initial_board_state:
+                print(row)
 
             # Find the moved piece
             move, piece = chessboard_recognition.find_moved_piece(initial_board_state, current_board_state)
+            print(f"Move: {move}, Piece: {piece}")
 
             # If no move was found
             if move is None:
@@ -57,11 +76,12 @@ if __name__ == '__main__':
                         print(f"Best move: {best_move}")
 
                         # Robot's move
+                        special = chessboard.is_special_move(best_move)
                         chessboard.move_piece(best_move)
                         #chessboard.display_move(best_move, piece)
 
                         # Update the initial board state
-                        initial_board_state = chessboard_recognition.update_board_state(initial_board_state, chessboard_recognition.chess_to_cell_notation(best_move))
+                        initial_board_state = chessboard_recognition.update_board_state(initial_board_state, chessboard_recognition.chess_to_cell_notation(best_move), special)
 
                         # Set the game start flag to False
                         is_game_start = False
@@ -75,8 +95,8 @@ if __name__ == '__main__':
                 chessboard.move_piece(move)
                 #chessboard.display_move(move, piece)
 
-                # Update the initial board state
-                initial_board_state = current_board_state
+                # Create a deep copy of the current board state to update the initial board state
+                initial_board_state = copy.deepcopy(current_board_state)
 
                 # Get the FEN string of the current board state
                 fen_string = chessboard.fen()
@@ -89,11 +109,12 @@ if __name__ == '__main__':
                     print(f"Best move: {best_move}")
 
                     # Robot's move
+                    special = chessboard.is_special_move(best_move)
                     chessboard.move_piece(best_move)
                     #chessboard.display_move(best_move, piece)
 
                     # Update the initial board state
-                    initial_board_state = chessboard_recognition.update_board_state(initial_board_state, chessboard_recognition.chess_to_cell_notation(best_move))
+                    initial_board_state = chessboard_recognition.update_board_state(initial_board_state, chessboard_recognition.chess_to_cell_notation(best_move), special)
 
                 else:
                     print(f"Failed to get the best move: {response.status_code}")
