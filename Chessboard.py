@@ -1,5 +1,6 @@
 import chess
 
+
 class Chessboard:
     def __init__(self):
         # Initialize the board in the starting position
@@ -10,8 +11,9 @@ class Chessboard:
         if chess.Move.from_uci(move) in self.board.legal_moves:
             # Make the move
             self.board.push(chess.Move.from_uci(move))
+            return True
         else:
-            raise ValueError(f"Illegal move: {move}")
+            return False
 
     def is_checkmate(self):
         # Check if the current board state is checkmate
