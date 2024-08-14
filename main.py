@@ -1,14 +1,17 @@
 import copy
-
 from ChessboardRecognition import ChessboardRecognition
 from Chessboard import Chessboard
 import cv2
 import requests
 from VideoCapture import VideoCapture
+from ChessboardStateLogic import ChessboardStateLogic
 
 if __name__ == '__main__':
     # Create a ChessboardRecognition object
     chessboard_recognition = ChessboardRecognition()
+
+    # Create a ChessboardStateLogic object
+    chessboard_state_logic = ChessboardStateLogic()
 
     # Create a Chessboard object
     chessboard = Chessboard()
@@ -16,11 +19,25 @@ if __name__ == '__main__':
     # Create a VideoCapture object
     cap = VideoCapture()
 
-    # Get the initial board state
+    # Get board position
     frame = cap.get_snapshot()
-    cap.save_snapshot('initial_snapshot.png')  # Save the initial snapshot
-    transformed_image = chessboard_recognition.transform_image(frame)
-    initial_board_state = chessboard_recognition.get_board_state(transformed_image)
+    height, width, _ = frame.shape
+    cap.save_snapshot('initial_snapshot.png')
+    src_points = chessboard_recognition.find_chessboard_corners(frame)
+    dst_points = chessboard_recognition.get_frame_resolution(frame)
+
+    # Wait for user to set up the chess pieces and press 's' to signal readiness
+    print("Set up the chess pieces and press 's' to signal readiness.")
+    while True:
+        if cv2.waitKey(1) & 0xFF == ord('s'):
+            break
+
+    # Get the initial board state
+    transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
+    initial_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
+
+    # Determine the orientation of the board
+    orientation = ChessboardStateLogic.determine_orientation(initial_board_state)
 
     # Set a fixed starting board state
     starting_board_state = [row[:] for row in initial_board_state]
@@ -45,7 +62,7 @@ if __name__ == '__main__':
             # user_input = input("Enter your move (e.g., 'd2d4') or 'no' to skip: ").strip()
 
             # Create a copy of the initial board state for the current move
-            current_board_state = copy.deepcopy(initial_board_state)
+            # current_board_state = copy.deepcopy(initial_board_state)
 
             #    special = chessboard.is_special_move(user_input)
 
@@ -55,8 +72,8 @@ if __name__ == '__main__':
 
             frame = cap.get_snapshot()
             cap.save_snapshot('current_snapshot.png')  # Save the current snapshot
-            transformed_image = chessboard_recognition.transform_image(frame)
-            current_board_state = chessboard_recognition.get_board_state(transformed_image)
+            transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
+            current_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
 
             # Find the moved piece
             move, piece = chessboard_recognition.find_moved_piece(initial_board_state, current_board_state)
