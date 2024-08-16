@@ -144,38 +144,46 @@ class ChessboardStateLogic:
 
         return board_state
 
+    def determine_orientation(self, initial_board_state):
+        """
+        Determine the orientation of the board based on the position of the blue king.
+        Returns one of 'bottom', 'top', 'left', 'right'.
+        """
+        # Check for the Blue (White) king in the key positions
+        if 'blue' in str(initial_board_state[7][4]):
+            return 'bottom'
+        elif 'blue' in str(initial_board_state[0][3]):
+            return 'top'
+        elif 'blue' in str(initial_board_state[4][0]):
+            return 'left'
+        elif 'blue' in str(initial_board_state[3][7]):
+            return 'right'
 
-def determine_orientation(initial_board_state):
-    """
-    Determine the orientation of the board based on the initial setup.
-    Returns one of 'bottom', 'top', 'left', 'right'.
-    """
-    if 'blue' in initial_board_state[7]:
+        # Default to bottom if the king is not in any of these key positions
         return 'bottom'
-    elif 'blue' in initial_board_state[0]:
-        return 'top'
-    elif any(row[0] == 'blue' for row in initial_board_state):
-        return 'left'
-    elif any(row[7] == 'blue' for row in initial_board_state):
-        return 'right'
-    return 'bottom'  # Default to bottom if not found
 
+    def rotate_board_to_bottom(self, board_state, orientation):
+        """
+        Rotates the board state to the 'bottom' orientation.
 
-def adjust_coordinates_for_orientation(move, orientation):
-    """
-    Adjust the move coordinates based on the board orientation.
-    """
-    start, end = move[:2], move[2:]
-    if orientation == 'right':
-        start_col = chr(ord('h') - (ord(start[0]) - ord('a')))
-        end_col = chr(ord('h') - (ord(end[0]) - ord('a')))
-        return start_col + start[1] + end_col + end[1]
-    elif orientation == 'left':
-        start_col = chr(ord('a') + (ord('h') - ord(start[0])))
-        end_col = chr(ord('a') + (ord('h') - ord(end[0])))
-        return start_col + start[1] + end_col + end[1]
-    elif orientation == 'top':
-        start_row = str(9 - int(start[1]))
-        end_row = str(9 - int(end[1]))
-        return start[0] + start_row + end[0] + end_row
-    return move  # No adjustment needed for 'bottom'
+        Parameters:
+        - board_state: 2D list representing the current state of the board.
+        - orientation: String indicating the current orientation of the board ('bottom', 'top', 'left', 'right').
+
+        Returns:
+        - Rotated board state with the 'bottom' orientation.
+        """
+
+        print(orientation)
+        # Number of 90-degree clockwise rotations needed to get to 'bottom' orientation
+        rotations = {'bottom': 0, 'right': 1, 'top': 2, 'left': 3}
+
+        # Get the number of 90-degree rotations needed
+        num_rotations = rotations[orientation]
+
+        # Rotate the board the specified number of times
+        for _ in range(num_rotations):
+            # Rotate the board 90 degrees clockwise
+            board_state = [list(row) for row in zip(*board_state[::-1])]
+
+        return board_state
