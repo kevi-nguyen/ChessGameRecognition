@@ -37,7 +37,10 @@ if __name__ == '__main__':
     initial_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
 
     # Determine the orientation of the board
-    orientation = ChessboardStateLogic.determine_orientation(initial_board_state)
+    orientation = chessboard_state_logic.determine_orientation(initial_board_state)
+
+    # Rotate the board to have the blue pieces at the bottom
+    initial_board_state = chessboard_state_logic.rotate_board_to_bottom(initial_board_state, orientation)
 
     # Set a fixed starting board state
     starting_board_state = [row[:] for row in initial_board_state]
@@ -71,12 +74,15 @@ if __name__ == '__main__':
             #                                           special)
 
             frame = cap.get_snapshot()
-            cap.save_snapshot('current_snapshot.png')  # Save the current snapshot
+            cap.save_snapshot('current_snapshot.png')
             transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
             current_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
 
+            # Rotate the board to have the blue pieces at the bottom
+            current_board_state = chessboard_state_logic.rotate_board_to_bottom(current_board_state, orientation)
+
             # Find the moved piece
-            move, piece = chessboard_recognition.find_moved_piece(initial_board_state, current_board_state)
+            move, piece = chessboard_state_logic.find_moved_piece(initial_board_state, current_board_state)
             print(f"Move: {move}, Piece: {piece}")
 
             # If no move was found
@@ -100,8 +106,8 @@ if __name__ == '__main__':
                         # chessboard.display_move(best_move, piece)
 
                         # Update the initial board state
-                        initial_board_state = chessboard_recognition.update_board_state(initial_board_state,
-                                                                                        chessboard_recognition.chess_to_cell_notation(
+                        initial_board_state = chessboard_state_logic.update_board_state(initial_board_state,
+                                                                                        chessboard_state_logic.chess_to_cell_notation(
                                                                                             best_move), special)
 
                         # Set the game start flag to False
@@ -137,8 +143,8 @@ if __name__ == '__main__':
                     # chessboard.display_move(best_move, piece)
 
                     # Update the initial board state
-                    initial_board_state = chessboard_recognition.update_board_state(initial_board_state,
-                                                                                    chessboard_recognition.chess_to_cell_notation(
+                    initial_board_state = chessboard_state_logic.update_board_state(initial_board_state,
+                                                                                    chessboard_state_logic.chess_to_cell_notation(
                                                                                         best_move), special)
 
                 else:
