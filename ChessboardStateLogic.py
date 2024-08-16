@@ -1,6 +1,26 @@
 
 class ChessboardStateLogic:
 
+    def cell_to_chess_notation(self, cell):
+        # Convert the cell coordinates to chess notation
+        return chr(cell[1] + ord('a')) + str(8 - cell[0])
+
+    def chess_to_cell_notation(self, move_str):
+        """
+        Converts a move string to a tuple.
+
+        Parameters:
+        - move_str: String representing the move, e.g., 'e2e4'.
+
+        Returns:
+        - Tuple representing the move in the format ((start_row, start_col), (end_row, end_col)).
+        """
+        start_col = ord(move_str[0]) - ord('a')
+        start_row = 8 - int(move_str[1])
+        end_col = ord(move_str[2]) - ord('a')
+        end_row = 8 - int(move_str[3])
+        return ((start_row, start_col), (end_row, end_col))
+
     def find_moved_piece(self, prev_state, curr_state):
         """
         Finds the moved piece by comparing the previous and current board states.
