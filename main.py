@@ -33,6 +33,8 @@ if __name__ == '__main__':
             break
 
     # Get the initial board state
+    frame = cap.get_snapshot()
+    cap.save_snapshot('current_snapshot.png')
     transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
     initial_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
 
