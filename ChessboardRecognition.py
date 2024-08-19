@@ -4,41 +4,25 @@ import numpy as np
 
 class ChessboardRecognition:
 
-    def detect_chessboard_harris(self, image):
-
-        # Convert the image to grayscale
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # Convert the grayscale image to float32
-        gray = np.float32(gray)
-
-        # Apply the Harris corner detection
-        dst = cv2.cornerHarris(gray, blockSize=2, ksize=3, k=0.04)
-
-        # Dilate the result to mark the corners
-        dst = cv2.dilate(dst, None)
-
-        # Threshold for an optimal value, marking the corners in red
-        image[dst > 0.01 * dst.max()] = [0, 0, 255]
-
-        # Display the result
-        cv2.imshow('Harris Corners', image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
     def find_chessboard_corners(self, frame):
         # Convert the frame to grayscale
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        cv2.imshow('Gray Image', gray)
 
         # Apply adaptive histogram equalization to enhance contrast
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         enhanced_gray = clahe.apply(gray)
 
+        cv2.imshow('Enhanced Gray Image', enhanced_gray)
+
         # Apply Gaussian Blur to reduce noise
-        blurred = cv2.GaussianBlur(enhanced_gray, (5, 5), 0)
+        blurred = cv2.GaussianBlur(enhanced_gray, (3, 3), 0)
+
+        cv2.imshow('Blurred Image', blurred)
 
         # Find the chessboard corners
-        ret, corners = cv2.findChessboardCorners(blurred, (7, 7), None)
+        ret, corners = cv2.findChessboardCorners(enhanced_gray, (7, 7), None)
 
         if ret:
             # Refine corner locations
@@ -56,10 +40,10 @@ class ChessboardRecognition:
 
             temp = self.find_extended_chessboard_corners(
                 [tuple(top_left), tuple(top_right), tuple(bottom_left), tuple(bottom_right)])
-            # img = cv2.drawChessboardCorners(frame, (7, 7), corners, ret)
-            # cv2.imwrite('chessboard_with_corners.png', img)
-            # cv2.imshow('Chessboard', img)
-            # cv2.waitKey(0)
+            img = cv2.drawChessboardCorners(frame, (7, 7), corners, ret)
+            cv2.imwrite('chessboard_with_corners.png', img)
+            cv2.imshow('Chessboard', img)
+            cv2.waitKey(0)
             return temp
         else:
             raise ValueError("Could not find a chessboard with the specified pattern")
@@ -82,78 +66,6 @@ class ChessboardRecognition:
             f"Top left: {extended_top_left}, Top right: {extended_top_right}, Bottom left: {extended_bottom_left}, Bottom right: {extended_bottom_right}")
 
         return [extended_top_left, extended_top_right, extended_bottom_left, extended_bottom_right]
-
-    def find_chessboard_corners_harris(self, frame):
-        # Convert the frame to grayscale
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Apply Gaussian Blur to reduce noise
-        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-
-        # Convert the grayscale image to float32
-        gray = np.float32(blurred)
-
-        # Apply the Harris corner detection
-        dst = cv2.cornerHarris(gray, blockSize=2, ksize=3, k=0.04)
-
-        # Dilate the result to mark the corners
-        dst = cv2.dilate(dst, None)
-
-        # Threshold for an optimal value, marking the corners
-        frame[dst > 0.01 * dst.max()] = [0, 0, 255]
-
-        # Find the coordinates of the corners
-        corners = np.argwhere(dst > 0.01 * dst.max())
-        corners = sorted(corners, key=lambda x: (x[1], x[0]))
-
-        if len(corners) >= 4:
-            # Extract the coordinates of the four outer corners
-            top_left = tuple(corners[0])
-            top_right = tuple(corners[7])
-            bottom_left = tuple(corners[-8])
-            bottom_right = tuple(corners[-1])
-            print(
-                f"Top left: {top_left}, Top right: {top_right}, Bottom left: {bottom_left}, Bottom right: {bottom_right}")
-
-            # Draw the corners on the frame for visualization
-            for corner in [top_left, top_right, bottom_left, bottom_right]:
-                cv2.circle(frame, corner, 5, (0, 255, 0), -1)
-
-            # Display the frame with corners
-            cv2.imshow('Chessboard Corners', frame)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
-            return [top_left, top_right, bottom_left, bottom_right]
-        else:
-            raise ValueError("Could not find a chessboard with the specified pattern")
-
-    def find_chessboard_corners_shi_tomasi(self, frame):
-        # Convert the frame to grayscale
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Apply Gaussian Blur to reduce noise
-        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-
-        # Use Shi-Tomasi corner detection
-        corners = cv2.goodFeaturesToTrack(blurred, maxCorners=81, qualityLevel=0.01, minDistance=10)
-        corners = np.int0(corners)
-
-        if len(corners) >= 4:
-            # Extract the coordinates of the four outer corners
-            corners = sorted(corners, key=lambda x: (x[0][1], x[0][0]))
-            top_left = tuple(corners[0][0])
-            top_right = tuple(corners[7][0])
-            bottom_left = tuple(corners[-8][0])
-            bottom_right = tuple(corners[-1][0])
-
-            # Draw the corners on the frame for visualization
-            for corner in [top_left, top_right, bottom_left, bottom_right]:
-                cv2.circle(frame, corner, 5, (0, 255, 0), -1)
-
-            return [top_left, top_right, bottom_left, bottom_right]
-        else:
-            raise ValueError("Could not find a chessboard with the specified pattern")
 
     def transform_image(self, image, src_points, dst_points):
         """
@@ -197,18 +109,32 @@ class ChessboardRecognition:
         return dst_points
 
     def get_board_state(self, image, width, height):
+
+        cv2.imshow('Original Image', image)
+
+        # Apply the Gray World Assumption to normalize the colors
+        normalized_image = self.apply_gray_world_assumption(image)
+
+        cv2.imshow('Normalized Image', normalized_image)
+
         # Apply a Gaussian blur to the image
         blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
+
+        cv2.imshow('Blurred Image', blurred_image)
 
         # Convert the blurred image to the HSV color space
         hsv = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
+        cv2.imshow('HSV Image', hsv)
+
         # Apply histogram equalization to the V channel
         hsv[:, :, 2] = cv2.equalizeHist(hsv[:, :, 2])
 
-        lower_red1 = np.array([0, 150, 150])
+        cv2.imshow('Equalized V Channel', hsv)
+
+        lower_red1 = np.array([0, 105, 105])
         upper_red1 = np.array([10, 255, 255])
-        lower_red2 = np.array([160, 150, 150])
+        lower_red2 = np.array([160, 105, 105])
         upper_red2 = np.array([180, 255, 255])
 
         # Threshold the HSV image to get only red colors
@@ -217,7 +143,7 @@ class ChessboardRecognition:
         red_mask = cv2.bitwise_or(red_mask1, red_mask2)
 
         # Define color ranges for blue
-        lower_blue = np.array([110, 150, 150])
+        lower_blue = np.array([110, 100, 100])
         upper_blue = np.array([130, 255, 255])
 
         # Threshold the HSV image to get only blue colors
@@ -262,3 +188,36 @@ class ChessboardRecognition:
         cv2.imshow('Image with cell lines', res)
 
         return board_state
+
+    def apply_gray_world_assumption(self, image):
+        # Ensure the image is valid
+        if image is None:
+            raise ValueError("Invalid image provided")
+
+        # Convert the image to the LAB color space
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+
+        # Split the LAB image into its channels
+        l, a, b = cv2.split(lab)
+
+        # Calculate the average values of the A and B channels
+        avg_a = np.mean(a)
+        avg_b = np.mean(b)
+        print(f"Average A: {avg_a}, Average B: {avg_b}")
+
+        # Adjust the A and B channels to make the average color gray
+        a = a - ((avg_a - 128) * (l / 255.0) * 1.1)
+        b = b - ((avg_b - 128) * (l / 255.0) * 1.1)
+
+        # Clip the values to ensure they are within valid range
+        a = np.clip(a, 0, 255).astype(np.uint8)
+        b = np.clip(b, 0, 255).astype(np.uint8)
+
+        # Merge the adjusted channels back into a LAB image
+        lab = cv2.merge([l, a, b])
+
+        # Convert the LAB image back to the BGR color space
+        result = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+
+        return result
+
