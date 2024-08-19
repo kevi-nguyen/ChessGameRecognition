@@ -93,7 +93,10 @@ class ChessboardStateLogic:
                 else:
                     correct_start = second_start
 
-                return correct_start + end, prev_state[ord(correct_start[0]) - ord('a')][8 - int(correct_start[1])]
+                if correct_start and end:
+                    return correct_start + end, prev_state[ord(correct_start[0]) - ord('a')][8 - int(correct_start[1])]
+                else:
+                    return None, None
 
             return start + end, prev_state[ord(start[0]) - ord('a')][8 - int(start[1])]
 
@@ -194,7 +197,6 @@ class ChessboardStateLogic:
         - Rotated board state with the 'bottom' orientation.
         """
 
-        print(orientation)
         # Number of 90-degree clockwise rotations needed to get to 'bottom' orientation
         rotations = {'bottom': 0, 'right': 1, 'top': 2, 'left': 3}
 
