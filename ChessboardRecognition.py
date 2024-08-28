@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from Retinex import Retinex
+from ColorDetector import ColorDetector
 
 class ChessboardRecognition:
 
@@ -262,7 +263,7 @@ class ChessboardRecognition:
             # Ensure saturation and value are not too broad
             lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
             upper_saturation = min(255, 255)
-            lower_value = max(value_range[0], 100)  # Avoid very low value
+            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
             upper_value = min(255, 255)
         elif color_name == 'red':
             # Red hue generally falls between 0 to 10 or 160 to 180
@@ -271,7 +272,7 @@ class ChessboardRecognition:
             # Ensure saturation and value are not too broad
             lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
             upper_saturation = min(255, 255)
-            lower_value = max(value_range[0], 100)  # Avoid very low value
+            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
             upper_value = min(255, 255)
         elif color_name == 'yellow':
             # Yellow hue generally falls between 20 to 30
@@ -311,40 +312,9 @@ class ChessboardRecognition:
         msrcp = Retinex().msrcp(image)
         cv2.imshow('MSRCP Image', msrcp)
 
-        # Convert the MSRCP to the HSV color space
-        hsv = cv2.cvtColor(msrcp, cv2.COLOR_BGR2HSV)
-
-        # Compute histograms for HSV channels
-        h_hist, s_hist, v_hist = self.compute_histogram(hsv)
-
-        # Determine HSV ranges for blue and red dynamically
-        lower_red, upper_red = self.determine_hsv_ranges(h_hist, s_hist, v_hist, color_name='red')
-        print(f"Lower Red: {lower_red}, Upper Red: {upper_red}")
-        lower_blue, upper_blue = self.determine_hsv_ranges(h_hist, s_hist, v_hist, color_name='blue')
-        print(f"Lower Blue: {lower_blue}, Upper Blue: {upper_blue}")
-
-        # Apply histogram equalization to the V channel
-        hsv[:, :, 2] = cv2.equalizeHist(hsv[:, :, 2])
-
-        cv2.imshow('Equalized V Channel', hsv)
-        cv2.waitKey(0)
-
-        # Threshold the HSV image to get only red colors
-        lower_red1 = np.array(lower_red)
-        upper_red1 = np.array(upper_red)
-        lower_red2 = np.array([160, lower_red[1], lower_red[2]])
-        upper_red2 = np.array([180, upper_red[1], upper_red[2]])
-
-        red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-        red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-        red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-
-        # Define color ranges for blue
-        lower_blue = np.array(lower_blue)
-        upper_blue = np.array(upper_blue)
-
-        # Threshold the HSV image to get only blue colors
-        blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        # Process the image to get masks for blue and red colors
+        blue_mask = ColorDetector().process_image(msrcp, 'blue')
+        red_mask = ColorDetector().process_image(msrcp, 'red')
 
         # Combine the masks for red and blue
         combined_mask = cv2.bitwise_or(red_mask, blue_mask)
@@ -391,20 +361,7 @@ class ChessboardRecognition:
         msrcp = Retinex().msrcp(image)
         cv2.imshow('MSRCP Image', msrcp)
 
-        # Convert the MSRCP to the HSV color space
-        hsv = cv2.cvtColor(msrcp, cv2.COLOR_BGR2HSV)
-
-        # Compute histograms for HSV channels
-        h_hist, s_hist, v_hist = self.compute_histogram(hsv)
-
-        # Determine HSV ranges for yellow dynamically
-        lower_yellow, upper_yellow = self.determine_hsv_ranges(h_hist, s_hist, v_hist, color_name='yellow')
-        print(f"Lower Yellow: {lower_yellow}, Upper Yellow: {upper_yellow}")
-
-        # Threshold the HSV image to get only yellow colors
-        lower_yellow = np.array(lower_yellow)
-        upper_yellow = np.array(upper_yellow)
-        yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+        yellow_mask = ColorDetector().process_image(msrcp, 'yellow')
 
         # Apply morphological operations to clean up the mask
         kernel = np.ones((5, 5), np.uint8)
@@ -432,7 +389,7 @@ class ChessboardRecognition:
 
         # Filter contours to find the four yellow markers
         for contour in contours:
-            if cv2.contourArea(contour) > 100:  # Filter out small contours
+            if cv2.contourArea(contour) > 500:  # Filter out small contours
                 M = cv2.moments(contour)
                 if M["m00"] != 0:
                     cX = int(M["m10"] / M["m00"])
@@ -460,5 +417,11 @@ class ChessboardRecognition:
         bottom_right = right_corners[1]
 
         print(f"Top left: {top_left}, Top right: {top_right}, Bottom left: {bottom_left}, Bottom right: {bottom_right}")
+
+        for point in [top_left, top_right, bottom_left, bottom_right]:
+            cv2.circle(frame, point, 10, (0, 255, 0), -1)
+
+        cv2.imshow('Detected Corners', frame)
+        cv2.waitKey(0)
 
         return [top_left, top_right, bottom_left, bottom_right]
