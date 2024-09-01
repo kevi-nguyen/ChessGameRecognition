@@ -172,18 +172,3 @@ class ColorDetector:
             mask = cv2.inRange(image_hsv, lower_bound, upper_bound)
 
         return mask
-
-# Example usage:
-if __name__ == "__main__":
-    # Load an image
-    image = cv2.imread('chessboard.jpg')
-
-    # Create an instance of the detector
-    detector = ColorDetector()
-
-    # Detect yellow in the image
-    yellow_mask = detector.process_image(image, 'yellow')
-    cv2.imshow('Yellow Mask', yellow_mask)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
