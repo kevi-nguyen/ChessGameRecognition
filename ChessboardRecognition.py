@@ -3,6 +3,7 @@ import numpy as np
 from Retinex import Retinex
 from ColorDetector import ColorDetector
 
+
 class ChessboardRecognition:
 
     def preprocess_image(self, image):
@@ -22,13 +23,13 @@ class ChessboardRecognition:
 
         cv2.imshow('Enhanced Gray Image', enhanced_gray)
 
-        #gamma = 0.5
-        #adjusted = np.array(255 * (enhanced_gray / 255) ** gamma, dtype='uint8')
+        # gamma = 0.5
+        # adjusted = np.array(255 * (enhanced_gray / 255) ** gamma, dtype='uint8')
 
-        #cv2.imshow('Adjusted Image', adjusted)
+        # cv2.imshow('Adjusted Image', adjusted)
 
         thresholded = cv2.adaptiveThreshold(enhanced_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
-                                            cv2.THRESH_BINARY, 15,10)
+                                            cv2.THRESH_BINARY, 15, 10)
 
         cv2.imshow('Threshold Image', thresholded)
 
@@ -132,169 +133,6 @@ class ChessboardRecognition:
         print(f"Destination points: {dst_points}")
         return dst_points
 
-    def get_board_state2(self, image, width, height):
-
-        cv2.imshow('Original Image', image)
-
-        msrcp = Retinex().msrcp(image)
-        cv2.imshow('MSRCP Image', msrcp)
-
-        # Convert the MSRCP to the HSV color space
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-        cv2.imshow('HSV Image', hsv)
-
-        # Apply histogram equalization to the V channel
-        hsv[:, :, 2] = cv2.equalizeHist(hsv[:, :, 2])
-
-        cv2.imshow('Equalized V Channel', hsv)
-        cv2.waitKey(0)
-
-        lower_red1 = np.array([0, 105, 105])
-        upper_red1 = np.array([10, 255, 255])
-        lower_red2 = np.array([160, 105, 105])
-        upper_red2 = np.array([180, 255, 255])
-
-        # Threshold the HSV image to get only red colors
-        red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-        red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-        red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-
-        # Define color ranges for blue
-        lower_blue = np.array([100, 130, 130])
-        upper_blue = np.array([130, 255, 255])
-
-        # Threshold the HSV image to get only blue colors
-        blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
-
-        # Combine the masks for red and blue
-        combined_mask = cv2.bitwise_or(red_mask, blue_mask)
-
-        # Bitwise-AND mask and original image
-        res = cv2.bitwise_and(msrcp, msrcp, mask=combined_mask)
-
-        # Calculate the size of each cell in pixels
-        cell_size = (height // 8, width // 8)
-
-        # Define an empty 2D array to hold the board state
-        board_state = [[None for _ in range(8)] for _ in range(8)]
-
-        # Iterate over the cells of the chessboard
-        for i in range(8):
-            for j in range(8):
-                # Calculate the coordinates of the cell
-                x1 = j * cell_size[0]
-                y1 = i * cell_size[1]
-                x2 = x1 + cell_size[0]
-                y2 = y1 + cell_size[1]
-
-                # Draw lines for each cell on the image with the combined mask
-                cv2.line(res, (x1, y1), (x2, y1), (0, 255, 0), 2)  # Top line
-                cv2.line(res, (x1, y1), (x1, y2), (0, 255, 0), 2)  # Left line
-                cv2.line(res, (x2, y1), (x2, y2), (0, 255, 0), 2)  # Right line
-                cv2.line(res, (x1, y2), (x2, y2), (0, 255, 0), 2)  # Bottom line
-
-                threshold = 1000
-
-                # Get the color of the piece in the cell
-                if cv2.countNonZero(blue_mask[y1:y2, x1:x2]) > threshold:
-                    board_state[i][j] = 'blue'
-                elif cv2.countNonZero(red_mask[y1:y2, x1:x2]) > threshold:
-                    board_state[i][j] = 'red'
-
-        # Display the image with cell lines
-        cv2.imshow('Image with cell lines', res)
-
-        return board_state
-
-    def compute_histogram(self, image_hsv):
-        """
-        Compute histograms for each HSV channel.
-
-        Parameters:
-        - image_hsv: HSV image array.
-
-        Returns:
-        - h_hist: Hue histogram.
-        - s_hist: Saturation histogram.
-        - v_hist: Value histogram.
-        """
-        h_hist = cv2.calcHist([image_hsv], [0], None, [180], [0, 180])
-        s_hist = cv2.calcHist([image_hsv], [1], None, [256], [0, 256])
-        v_hist = cv2.calcHist([image_hsv], [2], None, [256], [0, 256])
-        return h_hist, s_hist, v_hist
-
-    def determine_hsv_ranges(self, h_hist, s_hist, v_hist, color_name='blue'):
-        """
-        Determine HSV ranges for a specific color based on histograms.
-
-        Parameters:
-        - h_hist: Hue histogram.
-        - s_hist: Saturation histogram.
-        - v_hist: Value histogram.
-        - color_name: Name of the color to detect ('blue' or 'red').
-
-        Returns:
-        - lower_bound: Lower HSV bounds for the color.
-        - upper_bound: Upper HSV bounds for the color.
-        """
-        # Find prominent ranges based on histogram thresholds
-        hue_thresh = 0.1 * h_hist.max()
-        sat_thresh = 0.1 * s_hist.max()
-        val_thresh = 0.1 * v_hist.max()
-
-        hue_range = np.where(h_hist > hue_thresh)[0]
-        saturation_range = np.where(s_hist > sat_thresh)[0]
-        value_range = np.where(v_hist > val_thresh)[0]
-
-        # Ensure there is at least one value in the range
-        if hue_range.size == 0:
-            hue_range = np.array([0, 179])
-        if saturation_range.size == 0:
-            saturation_range = np.array([0, 255])
-        if value_range.size == 0:
-            value_range = np.array([0, 255])
-
-        # Define more precise ranges based on detected color
-        if color_name == 'blue':
-            # Blue hue generally falls between 100 to 140
-            lower_hue = max(hue_range[0], 100)
-            upper_hue = min(140, 140)
-            # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
-            upper_saturation = min(255, 255)
-            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
-            upper_value = min(255, 255)
-        elif color_name == 'red':
-            # Red hue generally falls between 0 to 10 or 160 to 180
-            lower_hue = max(hue_range[0], 0)
-            upper_hue = min(hue_range[-1], 10)
-            # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
-            upper_saturation = min(255, 255)
-            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
-            upper_value = min(255, 255)
-        elif color_name == 'yellow':
-            # Yellow hue generally falls between 20 to 30
-            lower_hue = max(hue_range[0], 20)
-            upper_hue = min(hue_range[-1], 30)
-            # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
-            upper_saturation = min(255, 255)
-            lower_value = max(value_range[0], 100)  # Avoid very low value
-            upper_value = min(255, 255)
-        elif color_name == 'green':
-            # Green hue generally falls between 35 to 85
-            lower_hue = max(hue_range[0], 35)
-            upper_hue = min(hue_range[-1], 85)
-            # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
-            upper_saturation = min(255, 255)
-            lower_value = max(value_range[0], 100)  # Avoid very low value
-            upper_value = min(255, 255)
-
-        return (lower_hue, lower_saturation, lower_value), (upper_hue, upper_saturation, upper_value)
-
     def get_board_state(self, image, width, height):
         """
         Determine the board state and detect colors dynamically based on HSV ranges.
@@ -356,55 +194,55 @@ class ChessboardRecognition:
 
         return board_state
 
-    def preprocess_image_for_yellow(self, image):
+    def preprocess_image_for_green(self, image):
         # Apply MSRCP for better color and contrast
         msrcp = Retinex().msrcp(image)
         cv2.imshow('MSRCP Image', msrcp)
 
-        yellow_mask = ColorDetector().process_image(msrcp, 'yellow')
+        green_mask = ColorDetector().process_image(msrcp, 'green')
 
         # Apply morphological operations to clean up the mask
         kernel = np.ones((5, 5), np.uint8)
-        yellow_mask = cv2.morphologyEx(yellow_mask, cv2.MORPH_CLOSE, kernel)
-        yellow_mask = cv2.morphologyEx(yellow_mask, cv2.MORPH_OPEN, kernel)
+        green_mask = cv2.morphologyEx(green_mask, cv2.MORPH_CLOSE, kernel)
+        green_mask = cv2.morphologyEx(green_mask, cv2.MORPH_OPEN, kernel)
 
-        # Find contours in the yellow mask
-        contours, _ = cv2.findContours(yellow_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Find contours in the green mask
+        contours, _ = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        return contours, yellow_mask, msrcp
+        return contours, green_mask, msrcp
 
-    def find_chessboard_corners_yellow(self, frame):
-        # Preprocess the image to detect yellow markers
-        contours, yellow_mask, msrcp = self.preprocess_image_for_yellow(frame)
+    def find_chessboard_corners_green(self, frame):
+        # Preprocess the image to detect green markers
+        contours, green_mask, msrcp = self.preprocess_image_for_green(frame)
 
         print(f"Number of contours: {len(contours)}")
 
-        cv2.imshow('Yellow Mask', yellow_mask)
+        cv2.imshow('Green Mask', green_mask)
         cv2.imshow('MSRCP Image', msrcp)
 
         cv2.waitKey(0)
 
         # Initialize variables for storing the detected corner coordinates
-        yellow_corners = []
+        green_corners = []
 
-        # Filter contours to find the four yellow markers
+        # Filter contours to find the four green markers
         for contour in contours:
-            if cv2.contourArea(contour) > 500:  # Filter out small contours
+            if cv2.contourArea(contour) > 200:  # Filter out small contours
                 M = cv2.moments(contour)
                 if M["m00"] != 0:
                     cX = int(M["m10"] / M["m00"])
                     cY = int(M["m01"] / M["m00"])
-                    yellow_corners.append((cX, cY))
+                    green_corners.append((cX, cY))
 
-        if len(yellow_corners) < 4:
-            raise ValueError("Could not find at least 4 yellow markers.")
+        if len(green_corners) < 4:
+            raise ValueError("Could not find at least 4 green markers.")
 
         # Sort corners by x-coordinate to separate left and right
-        yellow_corners = sorted(yellow_corners, key=lambda x: x[0])
+        green_corners = sorted(green_corners, key=lambda x: x[0])
 
         # Separate left and right corners
-        left_corners = yellow_corners[:2]
-        right_corners = yellow_corners[2:]
+        left_corners = green_corners[:2]
+        right_corners = green_corners[2:]
 
         # Sort left corners by y-coordinate to identify top-left and bottom-left
         left_corners = sorted(left_corners, key=lambda x: x[1])
