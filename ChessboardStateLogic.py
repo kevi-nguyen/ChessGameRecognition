@@ -209,3 +209,26 @@ class ChessboardStateLogic:
             board_state = [list(row) for row in zip(*board_state[::-1])]
 
         return board_state
+
+    def transform_coordinates(self, i, j, orientation):
+        """
+        Transforms the board coordinates (i, j) based on the current board orientation.
+
+        Parameters:
+        - i: Row index (0 to 7).
+        - j: Column index (0 to 7).
+        - orientation: The current orientation of the board ('bottom', 'left', 'top', 'right').
+
+        Returns:
+        - Transformed (i_new, j_new) based on the orientation.
+        """
+        if orientation == 'bottom':  # Default orientation
+            return i, j
+        elif orientation == 'left':  # 90° clockwise
+            return j, 7 - i
+        elif orientation == 'top':  # 180°
+            return 7 - i, 7 - j
+        elif orientation == 'right':  # 90° counterclockwise
+            return 7 - j, i
+        else:
+            raise ValueError("Invalid orientation. Must be 'bottom', 'left', 'top', or 'right'.")
