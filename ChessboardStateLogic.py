@@ -113,6 +113,7 @@ class ChessboardStateLogic:
         Returns:
         - Updated board state after the move.
         """
+        move = self.chess_to_cell_notation(move)
         start_pos, end_pos = move
         start_row, start_col = start_pos
         end_row, end_col = end_pos
