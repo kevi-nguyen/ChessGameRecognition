@@ -47,7 +47,7 @@ class ChessboardRecognition:
         print(f"Destination points: {dst_points}")
         return dst_points
 
-    def get_board_state(self, image, width, height):
+    def get_board_state(self, image):
         """
         Determine the board state and detect colors dynamically based on HSV ranges.
 
@@ -60,6 +60,7 @@ class ChessboardRecognition:
         - board_state: 2D list of board state with detected colors.
         """
         cv2.imshow('Original Image', image)
+        height, width, _ = image.shape
 
         msrcp = Retinex().msrcp(image)
         cv2.imshow('MSRCP Image', msrcp)
