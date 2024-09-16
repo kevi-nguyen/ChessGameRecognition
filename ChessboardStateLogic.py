@@ -233,3 +233,35 @@ class ChessboardStateLogic:
             return 7 - j, i
         else:
             raise ValueError("Invalid orientation. Must be 'bottom', 'left', 'top', or 'right'.")
+
+    def board_to_string(self, board_state):
+        """
+        Converts the board state (2D list) to a string format for CPEE.
+        - None -> '0'
+        - 'blue' -> '1'
+        - 'red' -> '2'
+
+        Parameters:
+        - board_state: 2D list representing the current state of the board.
+
+        Returns:
+        - A string representation of the board.
+        """
+        return ''.join(
+            [''.join([str(0) if cell is None else str(1) if cell == 'blue' else str(2) for cell in row]) for row in
+             board_state])
+
+    def string_to_board(self, board_string):
+        """
+        Converts a string representation back to a board state (2D list).
+
+        Parameters:
+        - board_string: String representation of the board state.
+
+        Returns:
+        - 2D list representing the current state of the board.
+        """
+        board_size = 8
+        return [[None if c == '0' else 'blue' if c == '1' else 'red' for c in board_string[i:i + board_size]] for i in
+                range(0, len(board_string), board_size)]
+
