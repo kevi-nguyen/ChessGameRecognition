@@ -10,6 +10,10 @@ app = FastAPI()
 def move_piece(fen: str, move: str):
     return ChessboardLogic().move_piece(fen, move)
 
+@app.get("/check_illegal_move")
+def check_illegal_move(fen: str, move: str):
+    return ChessboardLogic().is_illegal_move(fen, move)
+
 
 @app.get("/check_game_end")
 def is_checkmate(fen: str):
