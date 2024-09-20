@@ -7,3 +7,4 @@ uvicorn
 numpy
 requests
 chess
+pillow
