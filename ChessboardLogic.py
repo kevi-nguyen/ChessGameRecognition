@@ -36,3 +36,11 @@ class ChessboardLogic:
             if board.is_en_passant(uci_move):
                 return True
         return False
+
+    def is_illegal_move(self, fen, move):
+        board = chess.Board(fen)
+        # Validate the move
+        if chess.Move.from_uci(move) in board.legal_moves:
+            return False
+        else:
+            return True
