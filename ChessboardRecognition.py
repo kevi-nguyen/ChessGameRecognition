@@ -59,11 +59,13 @@ class ChessboardRecognition:
         Returns:
         - board_state: 2D list of board state with detected colors.
         """
-        cv2.imshow('Original Image', image)
-        height, width, _ = image.shape
+
+        # cv2.imshow('Original Image', image)
+        width, height, _ = image.shape
+        print(f"Image shape: {image.shape}")
 
         msrcp = Retinex().msrcp(image)
-        cv2.imshow('MSRCP Image', msrcp)
+        # cv2.imshow('MSRCP Image', msrcp)
 
         # Process the image to get masks for blue and red colors
         blue_mask = ColorDetector().process_image(msrcp, 'blue')
@@ -105,14 +107,14 @@ class ChessboardRecognition:
                     board_state[i][j] = 'red'
 
         # Display the image with cell lines
-        cv2.imshow('Image with cell lines', res)
+        # cv2.imshow('Image with cell lines', res)
 
         return board_state
 
     def preprocess_image_for_green(self, image):
         # Apply MSRCP for better color and contrast
         msrcp = Retinex().msrcp(image)
-        cv2.imshow('MSRCP Image', msrcp)
+        # cv2.imshow('MSRCP Image', msrcp)
 
         green_mask = ColorDetector().process_image(msrcp, 'green')
 
@@ -127,22 +129,23 @@ class ChessboardRecognition:
         return contours, green_mask, msrcp
 
     def find_chessboard_corners_green(self, frame):
+
         # Preprocess the image to detect green markers
         contours, green_mask, msrcp = self.preprocess_image_for_green(frame)
 
         print(f"Number of contours: {len(contours)}")
 
-        cv2.imshow('Green Mask', green_mask)
-        cv2.imshow('MSRCP Image', msrcp)
+        # cv2.imshow('Green Mask', green_mask)
+        # cv2.imshow('MSRCP Image', msrcp)
 
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
 
         # Initialize variables for storing the detected corner coordinates
         green_corners = []
 
         # Filter contours to find the four green markers
         for contour in contours:
-            if cv2.contourArea(contour) > 200:  # Filter out small contours
+            if cv2.contourArea(contour) > 10:  # Filter out small contours
                 M = cv2.moments(contour)
                 if M["m00"] != 0:
                     cX = int(M["m10"] / M["m00"])
@@ -174,7 +177,7 @@ class ChessboardRecognition:
         for point in [top_left, top_right, bottom_left, bottom_right]:
             cv2.circle(frame, point, 10, (0, 255, 0), -1)
 
-        cv2.imshow('Detected Corners', frame)
-        cv2.waitKey(0)
+        # cv2.imshow('Detected Corners', frame)
+        # cv2.waitKey(0)
 
         return [top_left, top_right, bottom_left, bottom_right]

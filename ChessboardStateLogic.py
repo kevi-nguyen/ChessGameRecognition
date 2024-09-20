@@ -1,4 +1,3 @@
-
 class ChessboardStateLogic:
 
     def cell_to_chess_notation(self, cell):
@@ -264,4 +263,3 @@ class ChessboardStateLogic:
         board_size = 8
         return [[None if c == '0' else 'blue' if c == '1' else 'red' for c in board_string[i:i + board_size]] for i in
                 range(0, len(board_string), board_size)]
-
