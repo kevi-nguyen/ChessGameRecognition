@@ -1,5 +1,7 @@
 from typing import Tuple
 from pydantic import BaseModel
+from fastapi import Form
+import ast
 import cv2
 import numpy as np
 from ChessboardRecognition import ChessboardRecognition
@@ -10,18 +12,6 @@ import uvicorn
 
 app = FastAPI()
 
-
-class ImageData(BaseModel):
-    frame_str: str
-
-
-class EnhancedImageData(BaseModel):
-    frame_str: str
-    src_points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]]
-    dst_points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]]
-    orientation: str
-
-
 class ResponseData(BaseModel):
     board_state: str
     src_points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]]
@@ -30,19 +20,24 @@ class ResponseData(BaseModel):
 
 
 @app.post("/get_dst_points")
-def get_frame_resolution(data: ImageData):
-    frame_str = data.frame_str
+def get_frame_resolution(frame_str: str = Form(...)):
     frame = decode_base64_image(frame_str)
     return ChessboardRecognition().get_frame_resolution(frame)
 
 
 @app.post("/get_board_state")
-def get_board_state(data: EnhancedImageData):
-    frame_str = data.frame_str
+def get_board_state(frame_str: str = Form(...),
+                    src_points_str: str = Form(...),
+                    dst_points_str: str = Form(...),
+                    orientation: str = Form(...)):
     frame = decode_base64_image(frame_str)
-    src_points = data.src_points
-    dst_points = data.dst_points
-    orientation = data.orientation
+    src_points: Tuple[
+        Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]] = ast.literal_eval(
+        src_points_str)
+    dst_points: Tuple[
+        Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]] = ast.literal_eval(
+        dst_points_str)
+
     frame = ChessboardRecognition().transform_image(frame, src_points, dst_points)
     board_state = ChessboardRecognition().get_board_state(frame)
     board_state = ChessboardStateLogic().rotate_board_to_bottom(board_state, orientation)
@@ -50,15 +45,13 @@ def get_board_state(data: EnhancedImageData):
 
 
 @app.post("/get_src_points")
-def find_chessboard_corners_green(data: ImageData):
-    frame_str = data.frame_str
+def find_chessboard_corners_green(frame_str: str = Form(...)):
     frame = decode_base64_image(frame_str)
     return ChessboardRecognition().find_chessboard_corners_green(frame)
 
 
 @app.post("/initialize_game")
-def initialize_game(data: ImageData):
-    frame_str = data.frame_str
+def initialize_game(frame_str: str = Form(...)):
     frame = decode_base64_image(frame_str)
     src_points = ChessboardRecognition().find_chessboard_corners_green(frame)
     dst_points = ChessboardRecognition().get_frame_resolution(frame)
