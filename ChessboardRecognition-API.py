@@ -1,16 +1,19 @@
-from typing import Tuple
-from pydantic import BaseModel
-from fastapi import Form
 import ast
+import base64
+from typing import Tuple
+
 import cv2
 import numpy as np
+import uvicorn
+from fastapi import FastAPI
+from fastapi import Form
+from pydantic import BaseModel
+
 from ChessboardRecognition import ChessboardRecognition
 from ChessboardStateLogic import ChessboardStateLogic
-from fastapi import FastAPI, HTTPException
-import base64
-import uvicorn
 
 app = FastAPI()
+
 
 class ResponseData(BaseModel):
     board_state: str

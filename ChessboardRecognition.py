@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-from Retinex import Retinex
+
 from ColorDetector import ColorDetector
+from Retinex import Retinex
 
 
 class ChessboardRecognition:

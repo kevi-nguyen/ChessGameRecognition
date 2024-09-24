@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException
 import uvicorn
+from fastapi import FastAPI
 from fastapi import Form
-from ChessboardLogic import ChessboardLogic
-from ChessboardStateLogic import ChessboardStateLogic
 from pydantic import BaseModel
 
+from ChessboardLogic import ChessboardLogic
+from ChessboardStateLogic import ChessboardStateLogic
+
 app = FastAPI()
+
 
 class ResponseData(BaseModel):
     double_move: bool
@@ -67,9 +69,9 @@ def is_special_move(fen: str = Form(...), move: str = Form(...)):
 
 @app.post("/get_cobot_move")
 def coordinates_to_cobot_move(board_state_string: str = Form(...),
-    move: str = Form(...),
-    special: bool = Form(...),
-    orientation: str = Form(...)):
+                              move: str = Form(...),
+                              special: bool = Form(...),
+                              orientation: str = Form(...)):
     board_state = ChessboardStateLogic().string_to_board(board_state_string)
     result = ChessboardStateLogic().coordinates_to_cobot_move(board_state, move, special, orientation)
     return ResponseData(double_move=result[0], start_i=result[1], start_j=result[2], end_i=result[3], end_j=result[4],

@@ -1,5 +1,5 @@
-import numpy as np
 import cv2
+import numpy as np
 
 
 class Retinex:
@@ -30,7 +30,7 @@ class Retinex:
 
         return np.log10(img) - np.log10(self.get_gaussian_blur(img, ksize=0, sigma=sigma) + 1.0)
 
-    def msr(self, img, sigma_scales=[15, 80, 250], apply_normalization = True):
+    def msr(self, img, sigma_scales=[15, 80, 250], apply_normalization=True):
         img = img.astype(np.float64) + 1.0  # Add 1.0 to avoid log(0)
 
         # Multi-scale retinex of an image

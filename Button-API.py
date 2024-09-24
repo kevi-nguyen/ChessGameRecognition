@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+import time
+
 import serial
 import uvicorn
-import time
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 

@@ -250,34 +250,42 @@ class ChessboardStateLogic:
                 if end_pos == (7, 6):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((7, 4), (7, 6), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((7, 7), (7, 5), orientation)
-                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                            str(start_j2), str(end_i2), str(end_j2)]
                 # Queenside castling
                 elif end_pos == (7, 2):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((7, 4), (7, 2), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((7, 0), (7, 3), orientation)
-                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                            str(start_j2), str(end_i2), str(end_j2)]
             elif piece == 'red' and start_pos == (0, 4) and end_pos in [(0, 6), (0, 2)]:
                 # Kingside castling
                 if end_pos == (0, 6):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((0, 4), (0, 6), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((0, 7), (0, 5), orientation)
-                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                            str(start_j2), str(end_i2), str(end_j2)]
                 # Queenside castling
                 elif end_pos == (0, 2):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((0, 4), (0, 2), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((0, 0), (0, 3), orientation)
-                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                    return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                            str(start_j2), str(end_i2), str(end_j2)]
             # Handle en passant
             if piece == 'blue' and start_row == 3 and end_row == 2 and board_state[end_row][
                 end_col] is None and start_col != end_col:
-                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col), (end_row, end_col), orientation)
+                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
+                                                                              (end_row, end_col), orientation)
                 start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (9, 9), orientation)
-                return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                        str(start_j2), str(end_i2), str(end_j2)]
             elif piece == 'red' and start_row == 4 and end_row == 5 and board_state[end_row][
                 end_col] is None and start_col != end_col:
-                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col), (end_row, end_col), orientation)
+                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
+                                                                              (end_row, end_col), orientation)
                 start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (9, 9), orientation)
-                return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+                return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                        str(start_j2), str(end_i2), str(end_j2)]
         else:
             start_i1, start_j1, end_i1, end_j1 = (9, 9, 9, 9)
 
@@ -288,7 +296,8 @@ class ChessboardStateLogic:
             start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, start_col), (end_row, end_col),
                                                                           orientation)
 
-            return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2), str(end_i2), str(end_j2)]
+            return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2),
+                    str(end_i2), str(end_j2)]
 
     def positions_to_string(self, start, end, orientation):
         """
