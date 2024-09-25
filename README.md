@@ -13,9 +13,11 @@ This project implements a chess game recognition system using computer vision. T
 
 ## Requirements
 
-- Python 3.9+
-- OpenCV
-- Stockfish
+- Python 3.x
+- OpenCV for image processing.
+- FastAPI for web services.
+- Stockfish for chess AI.
+- Numpy for matrix operations.
 
 The project dependencies can be installed using `pip`:
 
