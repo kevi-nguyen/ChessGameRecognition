@@ -53,13 +53,6 @@ pydantic
    ```
    This will start the FastAPI service on different URLs for example the localhost `http://0.0.0.0:8080`, and it will expose endpoints for interacting with the chessboard, recognizing moves, and sending them to the robot.
 
-4. **Start the Robot Control**:
-   You can orchestrate multiple services for controlling the robot, capturing images, and processing chess moves using the following code snippet in your main script:
-   ```python
-   if __name__ == "__main__":
-       uvicorn.run(app, host="0.0.0.0", port=8080)
-   ```
-
 ## Overview of the Game Structure
 
 The chess game recognition system works through the following steps:
