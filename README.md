@@ -1,4 +1,4 @@
-# Chess Game Recognition with Robot Control
+# Chess Game Recognition
 
 This project implements a chess game recognition system using computer vision. The system captures a snapshot of the chessboard, processes the image to recognize the positions of chess pieces based on color, and then transform the coordinates, allowing a robot to interact with the chessboard. The game logic is integrated with Stockfish to determine the best possible moves, and the system can and should communicate with external services.
 
