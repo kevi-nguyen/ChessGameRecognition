@@ -9,7 +9,7 @@ This project implements a chess game recognition system using computer vision. T
 - **Stockfish Integration**: Utilizes Stockfish to compute the best move for the robot after each player move.
 - **Robot Control**: Translates chess moves into robot coordinates to make physical movements on the chessboard.
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
-- **FastAPI Integration**: Provides a RESTful API interface for managing chess games and processing snapshots.
+- **FastAPI Integration**: Provides a handful RESTful API interfaces in a microservice architecture for managing chess games and processing snapshots.
 
 ## Requirements
 
