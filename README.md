@@ -48,7 +48,9 @@ pydantic
    pip install -r requirements.txt
    ```
 
-3. **Run the Service**:
+3. **Run the Services**:
+   There will be four different services, which can be started independently: Chessboard-API, ChessboardRecognition-API, Button-API, and Stockfish-API. They all serve different purposes.
+   
    To start the chess game recognition services, use the following command:
    ```bash
    python <specific service>.py
