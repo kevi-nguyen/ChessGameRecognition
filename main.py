@@ -1,10 +1,12 @@
 import copy
-from ChessboardRecognition import ChessboardRecognition
-from Chessboard import Chessboard
+
 import cv2
 import requests
-from VideoCapture import VideoCapture
+
+from Chessboard import Chessboard
+from ChessboardRecognition import ChessboardRecognition
 from ChessboardStateLogic import ChessboardStateLogic
+from VideoCapture import VideoCapture
 
 if __name__ == '__main__':
     # Create a ChessboardRecognition object
@@ -21,22 +23,17 @@ if __name__ == '__main__':
 
     # Get board position
     frame = cap.get_snapshot()
-    height, width, _ = frame.shape
-    cap.save_snapshot('initial_snapshot.png')
-    src_points = chessboard_recognition.find_chessboard_corners(frame)
+
+    # frame = cv2.imread('images/IMG_5388 Large.jpeg')
+    cv2.imshow('Chessboard', frame)
+    cv2.waitKey(0)
+    # cap.save_snapshot('initial_snapshot.png')
+    src_points = chessboard_recognition.find_chessboard_corners_green(frame)
     dst_points = chessboard_recognition.get_frame_resolution(frame)
 
-    # Wait for user to set up the chess pieces and press 's' to signal readiness
-    print("Set up the chess pieces and press 's' to signal readiness.")
-    while True:
-        if cv2.waitKey(1) & 0xFF == ord('s'):
-            break
-
     # Get the initial board state
-    frame = cap.get_snapshot()
-    cap.save_snapshot('current_snapshot.png')
     transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
-    initial_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
+    initial_board_state = chessboard_recognition.get_board_state(transformed_image)
 
     # Determine the orientation of the board
     orientation = chessboard_state_logic.determine_orientation(initial_board_state)
@@ -78,7 +75,7 @@ if __name__ == '__main__':
             frame = cap.get_snapshot()
             cap.save_snapshot('current_snapshot.png')
             transformed_image = chessboard_recognition.transform_image(frame, src_points, dst_points)
-            current_board_state = chessboard_recognition.get_board_state(transformed_image, height, width)
+            current_board_state = chessboard_recognition.get_board_state(transformed_image)
 
             # Rotate the board to have the blue pieces at the bottom
             current_board_state = chessboard_state_logic.rotate_board_to_bottom(current_board_state, orientation)
@@ -109,8 +106,7 @@ if __name__ == '__main__':
 
                         # Update the initial board state
                         initial_board_state = chessboard_state_logic.update_board_state(initial_board_state,
-                                                                                        chessboard_state_logic.chess_to_cell_notation(
-                                                                                            best_move), special)
+                                                                                        best_move, special)
 
                         # Set the game start flag to False
                         is_game_start = False
@@ -146,8 +142,7 @@ if __name__ == '__main__':
 
                     # Update the initial board state
                     initial_board_state = chessboard_state_logic.update_board_state(initial_board_state,
-                                                                                    chessboard_state_logic.chess_to_cell_notation(
-                                                                                        best_move), special)
+                                                                                    best_move, special)
 
                 else:
                     print(f"Failed to get the best move: {response.status_code}")
