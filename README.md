@@ -47,15 +47,57 @@ pydantic
    ```bash
    pip install -r requirements.txt
    ```
+3. **Adjust Paths and Ports**
+   Before running the Chess Game Recognition system, you may need to adjust certain file paths and port configurations for the correct operation of key components like **Stockfish** and the **button integration**.
 
-3. **Run the Services**:
+
+   **Stockfish Path Configuration**
+      The project relies on Stockfish for chess move analysis, and it needs to know where the Stockfish executable is located. By default, the code will look for `stockfish` (or `stockfish.exe` on Windows). However, this assumes either:
+        - The executable is in the same directory as the script.
+        - Or it is in the system's `PATH` environment variable.
+  
+      If Stockfish is installed in a custom directory, you can either:
+      1. Place `stockfish.exe` in the same folder as your script.
+      2. Set the correct path explicitly in the code, like so:
+
+      ```python
+      STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or 'C:/path/to/stockfish.exe'
+      stockfish = Stockfish(path=STOCKFISH_PATH)
+      ```
+
+      For Linux systems, update the path similarly with the appropriate executable path, such as:
+
+      ```python
+      STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or '/usr/local/bin/stockfish'
+      ```
+   **Button Integration (Serial Port Adjustment)**
+      If you're using a button connected via a serial port, the `port` variable in the code needs to match the serial port available on your computer.
+      The current port is configured for a macOS system:
+      ```python
+      port = '/dev/tty.usbserial-AQ027FTG'
+      ```
+      On a Windows system, you will need to change this to the appropriate **COM port** (e.g., `COM3`), and on Linux, it might look like `/dev/ttyUSB0`. Adjust the code as follows:
+
+      - For **Windows**:
+      ```python
+      port = 'COM3'  # Replace with the correct COM port number
+      ```
+
+      - For **Linux**:
+      ```python
+      port = '/dev/ttyUSB0'  # Replace with the correct USB serial port
+      ```
+
+      Ensure that the correct serial driver is installed and that the device is properly connected.
+
+5. **Run the Services**:
    There will be four different services, which can be started independently: Chessboard-API, ChessboardRecognition-API, Button-API, and Stockfish-API. They all serve different purposes.
    
    To start the chess game recognition services, use the following command:
    ```bash
    python <specific service>.py
    ```
-   This will start the FastAPI service on different URLs for example the localhost `http://0.0.0.0:8080`, and it will expose endpoints for interacting with the chessboard, recognizing moves, and sending them to the robot.
+   This will start the FastAPI service on different URLs for example `http://0.0.0.0:8080`, and it will expose endpoints for interacting with the chessboard, recognizing moves, and sending them to the robot.
 
 ## Overview of the Game Structure
 
