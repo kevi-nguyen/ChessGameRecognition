@@ -40,7 +40,7 @@ def get_button_status():
     return {"status": "not pressed"}
 
 
-@app.get("/wait-for-button-press")
+@app.get("/wait_for_button_press")
 def wait_for_button_press():
     """
     Endpoint to wait for the button to be pressed and then return the status.
