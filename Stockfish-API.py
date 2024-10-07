@@ -11,7 +11,7 @@ stockfish = Stockfish(path=STOCKFISH_PATH)
 app = FastAPI()
 
 
-@app.get("/get_move")
+@app.get("/get_best_move")
 def get_move(fen: str):
     # Validate the FEN string
     try:
