@@ -80,7 +80,7 @@ def get_move(fen: str = Form(...)):
 
     stockfish.set_fen_position(fen)
     best_move = stockfish.get_best_move()
-    return {"move": best_move}
+    return best_move
 
 
 @app.post("/update_chessboard")
