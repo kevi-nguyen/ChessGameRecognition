@@ -2,7 +2,7 @@ import os
 
 import chess
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from stockfish import Stockfish
 
 STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or 'stockfish'
@@ -11,8 +11,8 @@ stockfish = Stockfish(path=STOCKFISH_PATH)
 app = FastAPI()
 
 
-@app.get("/get_best_move")
-def get_move(fen: str):
+@app.post("/get_best_move")
+def get_move(fen: str = Form(...)):
     # Validate the FEN string
     try:
         chess.Board(fen)
