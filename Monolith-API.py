@@ -70,8 +70,8 @@ class ResponseDataInitGame(BaseModel):
 #         except Exception as e:
 #             raise HTTPException(status_code=500, detail=f"Error: {e}")
 
-@app.get("/get_best_move")
-def get_move(fen: str):
+@app.post("/get_best_move")
+def get_move(fen: str = Form(...)):
     # Validate the FEN string
     try:
         chess.Board(fen)
