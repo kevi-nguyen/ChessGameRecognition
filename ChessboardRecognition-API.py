@@ -17,8 +17,8 @@ app = FastAPI()
 
 class ResponseData(BaseModel):
     board_state: str
-    src_points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]]
-    dst_points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float], Tuple[float, float]]
+    src_points: str
+    dst_points: str
     orientation: str
 
 
@@ -62,8 +62,8 @@ def initialize_game(frame_str: str = Form(...)):
     board_state = ChessboardRecognition().get_board_state(transformed_image)
     orientation = ChessboardStateLogic().determine_orientation(board_state)
     board_state = ChessboardStateLogic().rotate_board_to_bottom(board_state, orientation)
-    return ResponseData(board_state=ChessboardStateLogic().board_to_string(board_state), src_points=src_points,
-                        dst_points=dst_points, orientation=orientation)
+    return ResponseData(board_state=ChessboardStateLogic().board_to_string(board_state), src_points=str(src_points),
+                        dst_points=str(dst_points), orientation=orientation)
 
 
 def decode_base64_image(base64_str):
