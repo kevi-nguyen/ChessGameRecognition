@@ -45,7 +45,6 @@ class ChessboardRecognition:
             (0, height),  # Bottom-left corner
             (width, height)  # Bottom-right corner
         ]
-        print(f"Destination points: {dst_points}")
         return dst_points
 
     def get_board_state(self, image):
@@ -63,7 +62,6 @@ class ChessboardRecognition:
 
         # cv2.imshow('Original Image', image)
         width, height, _ = image.shape
-        print(f"Image shape: {image.shape}")
 
         msrcp = Retinex().msrcp(image)
         # cv2.imshow('MSRCP Image', msrcp)
@@ -134,7 +132,7 @@ class ChessboardRecognition:
         # Preprocess the image to detect green markers
         contours, green_mask, msrcp = self.preprocess_image_for_green(frame)
 
-        print(f"Number of contours: {len(contours)}")
+        #print(f"Number of contours: {len(contours)}")
 
         # cv2.imshow('Green Mask', green_mask)
         # cv2.imshow('MSRCP Image', msrcp)
@@ -173,7 +171,7 @@ class ChessboardRecognition:
         top_right = right_corners[0]
         bottom_right = right_corners[1]
 
-        print(f"Top left: {top_left}, Top right: {top_right}, Bottom left: {bottom_left}, Bottom right: {bottom_right}")
+        #print(f"Top left: {top_left}, Top right: {top_right}, Bottom left: {bottom_left}, Bottom right: {bottom_right}")
 
         for point in [top_left, top_right, bottom_left, bottom_right]:
             cv2.circle(frame, point, 10, (0, 255, 0), -1)

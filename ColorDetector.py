@@ -64,11 +64,11 @@ class ColorDetector:
         saturation_range = np.where(s_hist > sat_thresh)[0]
         value_range = np.where(v_hist > val_thresh)[0]
 
-        print(
-            f"Histogram thresholds for {color_name}: hue_thresh={hue_thresh}, sat_thresh={sat_thresh}, val_thresh={val_thresh}")
-        print(f"Detected hue range: {hue_range}")
-        print(f"Detected saturation range: {saturation_range}")
-        print(f"Detected value range: {value_range}")
+        # print(
+        #     f"Histogram thresholds for {color_name}: hue_thresh={hue_thresh}, sat_thresh={sat_thresh}, val_thresh={val_thresh}")
+        # print(f"Detected hue range: {hue_range}")
+        # print(f"Detected saturation range: {saturation_range}")
+        # print(f"Detected value range: {value_range}")
 
         # Ensure there is at least one value in each range
         if hue_range.size == 0:
@@ -128,9 +128,7 @@ class ColorDetector:
         if lower_hue > upper_hue:
             lower_hue, upper_hue = upper_hue, lower_hue
 
-        # Print the ranges for debugging
-        print(
-            f"{color_name.capitalize()} - Lower HSV: ({lower_hue}, {lower_saturation}, {lower_value}), Upper HSV: ({upper_hue}, {upper_saturation}, {upper_value})")
+        #print(f"{color_name.capitalize()} - Lower HSV: ({lower_hue}, {lower_saturation}, {lower_value}), Upper HSV: ({upper_hue}, {upper_saturation}, {upper_value})")
 
         return (lower_hue, lower_saturation, lower_value), (upper_hue, upper_saturation, upper_value)
 
