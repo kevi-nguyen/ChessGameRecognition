@@ -276,22 +276,22 @@ class ChessboardStateLogic:
                 end_col] is None and start_col != end_col:
                 start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
                                                                               (end_row, end_col), orientation)
-                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (9, 9), orientation)
+                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (10, 0), orientation)
                 return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
                         str(start_j2), str(end_i2), str(end_j2)]
             elif piece == 'red' and start_row == 4 and end_row == 5 and board_state[end_row][
                 end_col] is None and start_col != end_col:
                 start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
                                                                               (end_row, end_col), orientation)
-                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (9, 9), orientation)
+                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (10, 0), orientation)
                 return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
                         str(start_j2), str(end_i2), str(end_j2)]
         else:
-            start_i1, start_j1, end_i1, end_j1 = (9, 9, 9, 9)
+            start_i1, start_j1, end_i1, end_j1 = (10, 10, 10, 10)
 
             if board_state[end_row][end_col] is not None:
                 double_move = True
-                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), (9, 9), orientation)
+                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), (10, 0), orientation)
 
             start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, start_col), (end_row, end_col),
                                                                           orientation)
