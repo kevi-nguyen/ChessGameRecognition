@@ -5,6 +5,8 @@ import time
 from typing import Tuple
 
 import chess
+import pyrealsense2 as rs
+from fastapi.responses import JSONResponse
 import cv2
 import numpy as np
 import serial
@@ -29,6 +31,13 @@ app = FastAPI()
 button_was_pressed = False
 button_is_pressed = False
 
+# Initialize Intel RealSense pipeline
+pipeline = rs.pipeline()
+config = rs.config()
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+pipeline.start(config)
+
+
 class ResponseDataCobotMove(BaseModel):
     double_move: bool
     start_i: str
@@ -40,11 +49,13 @@ class ResponseDataCobotMove(BaseModel):
     sec_end_i: str
     sec_end_j: str
 
+
 class ResponseDataInitGame(BaseModel):
     board_state: str
     src_points: str
     dst_points: str
     orientation: str
+
 
 # @app.get("/wait_for_button_press")
 # def wait_for_button_press():
@@ -69,6 +80,30 @@ class ResponseDataInitGame(BaseModel):
 #             raise HTTPException(status_code=500, detail=f"Serial error: {e}")
 #         except Exception as e:
 #             raise HTTPException(status_code=500, detail=f"Error: {e}")
+
+def get_frame():
+    frames = pipeline.wait_for_frames()
+    color_frame = frames.get_color_frame()
+    if not color_frame:
+        return None
+    color_image = np.asanyarray(color_frame.get_data())
+    return color_image
+
+
+@app.get("/current_frame")
+def current_frame():
+    frame = get_frame()
+    if frame is None:
+        return {"error": "No frame available"}
+
+    _, img_encoded = cv2.imencode('.jpg', frame)
+    img_bytes = img_encoded.tobytes()
+
+    # Convert to base64
+    img_base64 = base64.b64encode(img_bytes).decode('utf-8')
+
+    return JSONResponse(content={"image_base64": img_base64})
+
 
 @app.post("/get_best_move")
 def get_move(fen: str = Form(...)):
@@ -110,6 +145,7 @@ def update_board_state(board_state_string: str = Form(...), move: str = Form(...
     board_state = ChessboardStateLogic().string_to_board(board_state_string)
     return ChessboardStateLogic().board_to_string(ChessboardStateLogic().update_board_state(board_state, move, special))
 
+
 @app.post("/check_special_move")
 def is_special_move(fen: str = Form(...), move: str = Form(...)):
     return ChessboardLogic().is_special_move(fen, move)
@@ -122,8 +158,10 @@ def coordinates_to_cobot_move(board_state_string: str = Form(...),
                               orientation: str = Form(...)):
     board_state = ChessboardStateLogic().string_to_board(board_state_string)
     result = ChessboardStateLogic().coordinates_to_cobot_move(board_state, move, special, orientation)
-    return ResponseDataCobotMove(double_move=result[0], start_i=result[1], start_j=result[2], end_i=result[3], end_j=result[4],
-                        sec_start_i=result[5], sec_start_j=result[6], sec_end_i=result[7], sec_end_j=result[8])
+    return ResponseDataCobotMove(double_move=result[0], start_i=result[1], start_j=result[2], end_i=result[3],
+                                 end_j=result[4],
+                                 sec_start_i=result[5], sec_start_j=result[6], sec_end_i=result[7], sec_end_j=result[8])
+
 
 @app.post("/get_dst_points")
 def get_frame_resolution(frame_str: str = Form(...)):
@@ -165,8 +203,9 @@ def initialize_game(frame_str: str = Form(...)):
     board_state = ChessboardRecognition().get_board_state(transformed_image)
     orientation = ChessboardStateLogic().determine_orientation(board_state)
     board_state = ChessboardStateLogic().rotate_board_to_bottom(board_state, orientation)
-    return ResponseDataInitGame(board_state=ChessboardStateLogic().board_to_string(board_state), src_points=str(src_points),
-                        dst_points=str(dst_points), orientation=orientation)
+    return ResponseDataInitGame(board_state=ChessboardStateLogic().board_to_string(board_state),
+                                src_points=str(src_points),
+                                dst_points=str(dst_points), orientation=orientation)
 
 
 def decode_base64_image(base64_str):
