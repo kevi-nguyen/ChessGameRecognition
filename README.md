@@ -11,8 +11,6 @@ This project implements a chess game recognition system using computer vision. T
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
 - **FastAPI Integration**: Provides a handful RESTful API interfaces in a microservice architecture for managing chess games and processing snapshots.
 
-## Prerequ
-
 ## Requirements
 
 - Python 3.x
