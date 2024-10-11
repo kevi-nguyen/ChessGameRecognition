@@ -11,6 +11,8 @@ This project implements a chess game recognition system using computer vision. T
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
 - **FastAPI Integration**: Provides a handful RESTful API interfaces in a microservice architecture for managing chess games and processing snapshots.
 
+## Prerequ
+
 ## Requirements
 
 - Python 3.x
@@ -18,6 +20,7 @@ This project implements a chess game recognition system using computer vision. T
 - FastAPI for web services.
 - Stockfish for chess AI.
 - Numpy for matrix operations.
+- ... see below
 
 The project dependencies can be installed using `pip`:
 
@@ -32,7 +35,27 @@ numpy
 requests
 chess
 pydantic
+python-multipart
+pyserial
+pyrealsense2-macosx
+anyio
+h11
+jinja2
+setuptools
+wheel
+certifi
+urllib3
 ```
+Additional Requirements
+- Chess Pieces: The pieces should be colored blue and red to represent white and black pieces, respectively.
+- Chessboard Corners: Use green markers for the corners of the chessboard. These are mandatory to recognize the chessboard accurately.
+- Image Orientation: The images must be adjusted so that the defined “bottom” orientation aligns with the bottom side of the image. The “bottom” refers to the side where the player stands in opposition to the robot. Then you will able to set up the pieces side the way you like - the recognition system will automatically rotate the board to "bottom".
+
+Prerequites for a full chess game with this repository
+- Button: A physical button is used to signal the robot its turn.
+- Robot Arm: A robotic arm is used to interact with the chess pieces.
+- Process Engine: An orchestrating process engine is required to manage the interactions between the provided services and the robot.
+- Intel RealSense Camera: Ensure that an Intel RealSense camera is used for capturing the chessboard and pieces.
 
 ## Installation
 
@@ -91,7 +114,13 @@ pydantic
       Ensure that the correct serial driver is installed and that the device is properly connected.
 
 5. **Run the Services**:
-   There will be four different services, which can be started independently: Chessboard-API, ChessboardRecognition-API, Button-API, and Stockfish-API. They all serve different purposes.
+   There will be four different services, which can be started independently:
+   - Chessboard-API
+   - ChessboardRecognition-API
+   - Button-API
+   - Stockfish-API
+   - Camera
+   - (Monotlith-API)
    
    To start the chess game recognition services, use the following command:
    ```bash
@@ -159,6 +188,28 @@ The system employs an advanced image processing pipeline to ensure accurate dete
 
 With this approach, the system ensures accurate detection of chess pieces in various lighting conditions and maintains precise tracking of the chess game.
 
+By following the detailed steps and integrating color recognition with Stockfish and robotic control, the chess game recognition system provides a seamless interface for human-robot chess interaction.
+
 ---
 
-By following the detailed steps and integrating color recognition with Stockfish and robotic control, the chess game recognition system provides a seamless interface for human-robot chess interaction.
+MIT License
+
+Copyright (c) 2024 Kevin Nguyen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+2. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
