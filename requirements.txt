@@ -9,3 +9,12 @@ requests
 chess
 pydantic
 python-multipart
+pyserial
+pyrealsense2-macosx
+anyio
+h11
+jinja2
+setuptools
+wheel
+certifi
+urllib3
