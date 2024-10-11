@@ -68,11 +68,11 @@ Prerequites for a full chess game with this repository
    ```bash
    pip install -r requirements.txt
    ```
-3. **Adjust Paths and Ports**
+3. **Adjust Paths and Ports**:
    Before running the Chess Game Recognition system, you may need to adjust certain file paths and port configurations for the correct operation of key components like **Stockfish** and the **button integration**.
 
 
-   **Stockfish Path Configuration**
+   **Stockfish Path Configuration**:
       The project relies on Stockfish for chess move analysis, and it needs to know where the Stockfish executable is located. By default, the code will look for `stockfish` (or `stockfish.exe` on Windows). However, this assumes either:
         - The executable is in the same directory as the script.
         - Or it is in the system's `PATH` environment variable.
@@ -91,7 +91,7 @@ Prerequites for a full chess game with this repository
       ```python
       STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or '/usr/local/bin/stockfish'
       ```
-   **Button Integration (Serial Port Adjustment)**
+   **Button Integration (Serial Port Adjustment)**:
       If you're using a button connected via a serial port, the `port` variable in the code needs to match the serial port available on your computer.
       The current port is configured for a macOS system:
       ```python
