@@ -59,8 +59,8 @@ Prerequites for a full chess game with this repository
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/chess-game-recognition.git
-   cd chess-game-recognition
+   git clone https://github.com/kevi-nguyen/ChessGameRecognition.git
+   cd ChessGameRecognition
    ```
 
 2. **Install Dependencies**:
