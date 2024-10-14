@@ -115,7 +115,7 @@ Prerequites for a full chess game with this repository
       Ensure that the correct serial driver is installed and that the device is properly connected.
 
 5. **Run the Services**:
-   There will be four different services, which can be started independently:
+   There will be five different services, which can be started independently:
    - Chessboard-API
    - ChessboardRecognition-API
    - Button-API
@@ -133,11 +133,11 @@ Prerequites for a full chess game with this repository
 The chess game recognition system works through the following steps:
 
 1. **Snapshot Capture**: A snapshot of the chessboard is taken using a camera and encoded in Base64 format.
-2. **Corner Detection**: The image is processed to detect the green-marked corners of the chessboard. This establishes the coordinates of the chessboard in the image.
+2. **Corner Detection**: The image (the decoded Base64 string) is processed to detect the green-marked corners of the chessboard. This establishes the coordinates of the chessboard in the image.
 3. **Chessboard Mapping**: Once the corners are detected, the board is divided into 64 squares. Each square can be analyzed to detect whether a blue or red chess piece is present (blue for white pieces, red for black pieces).
 4. **Board State Management**: The initial board state is tracked, and the system continuously updates the board state by comparing the initial state to the current state after each player's move. Concurrently, a virtual chessboard is tracked with the actual pieces. In that way we always know which piece is on which square.
 5. **Move Detection**: When the player makes a move, the system compares the previous board state with the current one to detect which piece was moved. After the board state and the virtual chessboard are updated accordingly, the current FEN string is sent to Stockfish to get the best response.
-6. **Robot Move Execution**: After Stockfish computes the best move, we are transforming the chess move into robot coordinates and sent these to the robot to execute the move.
+6. **Robot Move Execution**: After Stockfish computes the best move, it transforms the chess move into robot coordinates (i, j) and sends these to the robot to execute the move.
 7. **Cycle Repeats**: The player moves again and presses a button to signal the end of their move, a new snapshot is taken, and the process starts again.
 
 ## Color Recognition
