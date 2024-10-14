@@ -97,7 +97,7 @@ class ChessboardRecognition:
                 cv2.line(res, (x2, y1), (x2, y2), (0, 255, 0), 2)  # Right line
                 cv2.line(res, (x1, y2), (x2, y2), (0, 255, 0), 2)  # Bottom line
 
-                threshold = 1000
+                threshold = 500
 
                 # Get the color of the piece in the cell
                 if cv2.countNonZero(blue_mask[y1:y2, x1:x2]) > threshold:
@@ -144,7 +144,7 @@ class ChessboardRecognition:
 
         # Filter contours to find the four green markers
         for contour in contours:
-            if cv2.contourArea(contour) > 10:  # Filter out small contours
+            if cv2.contourArea(contour) > 10:
                 M = cv2.moments(contour)
                 if M["m00"] != 0:
                     cX = int(M["m10"] / M["m00"])
