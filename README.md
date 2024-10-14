@@ -1,6 +1,7 @@
 # Chess Game Recognition
 
-This project implements a chess game recognition system using computer vision. The system captures a snapshot of the chessboard, processes the image to recognize the positions of chess pieces based on color, and then transform the coordinates, allowing a robot to interact with the chessboard. The game logic is integrated with Stockfish to determine the best possible moves, and the system can and should communicate with external services.
+This repository contains the Chess Project as part of for the TUM master lab "Advanced Practical Course - Sustainable Process Automation: Humans, Software and the Mediator Pattern (IN2128, IN2106, IN4303)".
+The project implements a chess game recognition system using computer vision. The system captures a snapshot of the chessboard, processes the image to recognize the positions of chess pieces based on color, and then transform the coordinates, allowing a robot to interact with the chessboard. The game logic is integrated with Stockfish to determine the best possible moves, and provides RESTful services for each of the functionalities.
 
 ## Features
 
@@ -9,6 +10,8 @@ This project implements a chess game recognition system using computer vision. T
 - **Stockfish Integration**: Utilizes Stockfish to compute the best move for the robot after each player move.
 - **Robot Control**: Translates chess moves into robot coordinates to make physical movements on the chessboard.
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
+- **Button Integration**: Recognizes physical button input to signal the robots turn.
+- **Camera Snapshot Input**: Initializes a coloured video stream pipeline to get snapshots from the chessboard upon requests.
 - **FastAPI Integration**: Provides a handful RESTful API interfaces in a microservice architecture for managing chess games and processing snapshots.
 
 ## Requirements
@@ -118,7 +121,6 @@ Prerequites for a full chess game with this repository
    - Button-API
    - Stockfish-API
    - Camera
-   - (Monotlith-API)
    
    To start the chess game recognition services, use the following command:
    ```bash
