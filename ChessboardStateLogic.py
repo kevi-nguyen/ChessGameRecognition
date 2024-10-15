@@ -233,7 +233,7 @@ class ChessboardStateLogic:
         else:
             raise ValueError("Invalid orientation. Must be 'bottom', 'left', 'top', or 'right'.")
 
-    def coordinates_to_cobot_move(self, board_state, move, special, orientation):
+    def coordinates_to_cobot_move(self, board_state, move, special, orientation, capture_blue, capture_red):
         move = self.chess_to_cell_notation(move)
         start_pos, end_pos = move
         start_row, start_col = start_pos
@@ -251,53 +251,75 @@ class ChessboardStateLogic:
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((7, 4), (7, 6), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((7, 7), (7, 5), orientation)
                     return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                            str(start_j2), str(end_i2), str(end_j2)]
+                            str(start_j2),
+                            str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
+
                 # Queenside castling
                 elif end_pos == (7, 2):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((7, 4), (7, 2), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((7, 0), (7, 3), orientation)
                     return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                            str(start_j2), str(end_i2), str(end_j2)]
+                            str(start_j2),
+                            str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
+
             elif piece == 'red' and start_pos == (0, 4) and end_pos in [(0, 6), (0, 2)]:
                 # Kingside castling
                 if end_pos == (0, 6):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((0, 4), (0, 6), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((0, 7), (0, 5), orientation)
                     return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                            str(start_j2), str(end_i2), str(end_j2)]
+                            str(start_j2),
+                            str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
+
                 # Queenside castling
                 elif end_pos == (0, 2):
                     start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((0, 4), (0, 2), orientation)
                     start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((0, 0), (0, 3), orientation)
                     return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                            str(start_j2), str(end_i2), str(end_j2)]
+                            str(start_j2),
+                            str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
+
             # Handle en passant
             if piece == 'blue' and start_row == 3 and end_row == 2 and board_state[end_row][
                 end_col] is None and start_col != end_col:
                 start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
-                                                                              (end_row, end_col), orientation)
-                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (10, 0), orientation)
+                                                                              capture_blue, orientation)
+                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (end_row, end_col),
+                                                                              orientation)
+                capture_blue = self.increment_blue_capture(capture_blue)
                 return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                        str(start_j2), str(end_i2), str(end_j2)]
+                        str(start_j2),
+                        str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
+
             elif piece == 'red' and start_row == 4 and end_row == 5 and board_state[end_row][
                 end_col] is None and start_col != end_col:
                 start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((start_row, start_col),
-                                                                              (end_row, end_col), orientation)
-                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (10, 0), orientation)
+                                                                              capture_red, orientation)
+                start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, end_col), (end_row, end_col),
+                                                                              orientation)
                 return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
-                        str(start_j2), str(end_i2), str(end_j2)]
+                        str(start_j2),
+                        str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
         else:
             start_i1, start_j1, end_i1, end_j1 = (10, 10, 10, 10)
-
-            if board_state[end_row][end_col] is not None:
-                double_move = True
-                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), (4, 8), orientation)
-
             start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, start_col), (end_row, end_col),
                                                                           orientation)
 
-            return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2), str(start_j2),
-                    str(end_i2), str(end_j2)]
+            if board_state[end_row][end_col] is not None:
+                double_move = True
+                if piece == 'blue':
+                    start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), capture_blue,
+                                                                                  orientation)
+                    capture_blue = self.increment_blue_capture(capture_blue)
+
+                if piece == 'red':
+                    start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), capture_red,
+                                                                                  orientation)
+                    capture_red = self.increment_red_capture(capture_red)
+
+            return [double_move, str(start_i1), str(start_j1), str(end_i1), str(end_j1), str(start_i2),
+                    str(start_j2),
+                    str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
 
     def positions_to_string(self, start, end, orientation):
         """
@@ -347,3 +369,17 @@ class ChessboardStateLogic:
         board_size = 8
         return [[None if c == '0' else 'blue' if c == '1' else 'red' for c in board_string[i:i + board_size]] for i in
                 range(0, len(board_string), board_size)]
+
+    def increment_blue_capture(self, capture_blue):
+        if capture_blue[0] == 0:
+            capture_blue = (7, capture_blue[1] + 1)
+        else:
+            capture_blue = (capture_blue[0] - 1, capture_blue[1])
+        return capture_blue
+
+    def increment_red_capture(self, capture_red):
+        if capture_red[0] == -1:
+            capture_red = (-1, capture_red[1] + 1)
+        else:
+            capture_red = (capture_red[0] - 1, capture_red[1])
+        return capture_red
