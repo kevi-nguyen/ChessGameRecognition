@@ -291,7 +291,7 @@ class ChessboardStateLogic:
 
             if board_state[end_row][end_col] is not None:
                 double_move = True
-                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), (0, 10), orientation)
+                start_i1, start_j1, end_i1, end_j1 = self.positions_to_string((end_row, end_col), (4, 8), orientation)
 
             start_i2, start_j2, end_i2, end_j2 = self.positions_to_string((start_row, start_col), (end_row, end_col),
                                                                           orientation)
