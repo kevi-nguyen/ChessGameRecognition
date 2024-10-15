@@ -89,6 +89,8 @@ The chess game recognition system works through the following steps:
 6. **Robot Move Execution**: After Stockfish computes the best move, it transforms the chess move into robot coordinates (i, j) and sends these to the robot to execute the move.
 7. **Cycle Repeats**: The player moves again and presses a button to signal the end of their move, a new snapshot is taken, and the process starts again.
 
+![CPEE](./CPEE_model/CPEE_demo)
+
 ## Color Recognition
 
 ### Image Processing Pipeline
