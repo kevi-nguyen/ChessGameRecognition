@@ -92,18 +92,18 @@ class ColorDetector:
             lower_hue = max(hue_range[0] - 10, 100)
             upper_hue = min(140, 140)
             # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0] - 200, 100)  # Avoid very low saturation
+            lower_saturation = max(saturation_range[0] - 200, 70)  # Avoid very low saturation
             upper_saturation = min(255, 255)
-            lower_value = max(value_range[0] - 200, 100)  # Avoid very low value
+            lower_value = max(value_range[0] - 200, 70)  # Avoid very low value
             upper_value = min(255, 255)
         elif color_name == 'red':
             # Red hue generally falls between 0 to 10 or 160 to 180
             lower_hue = max(hue_range[0] - 5, 0)
             upper_hue = min(hue_range[-1], 10)
             # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0] - 100, 100)  # Avoid very low saturation
+            lower_saturation = max(saturation_range[0] - 100, 70)  # Avoid very low saturation
             upper_saturation = min(255, 255)
-            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
+            lower_value = max(value_range[0] - 100, 70)  # Avoid very low value
             upper_value = min(255, 255)
         elif color_name == 'yellow':
             # Yellow hue generally falls between 20 to 30
@@ -116,12 +116,12 @@ class ColorDetector:
             upper_value = min(255, 255)
         elif color_name == 'green':
             # Green hue generally falls between 35 to 85
-            lower_hue = max(hue_range[0], 35)
+            lower_hue = max(hue_range[0] - 20, 20)
             upper_hue = min(hue_range[-1], 85)
             # Ensure saturation and value are not too broad
-            lower_saturation = max(saturation_range[0], 100)  # Avoid very low saturation
+            lower_saturation = max(saturation_range[0], 90)  # Avoid very low saturation
             upper_saturation = min(255, 255)
-            lower_value = max(value_range[0] - 100, 100)  # Avoid very low value
+            lower_value = max(value_range[0], 90)  # Avoid very low value
             upper_value = min(255, 255)
 
         # Ensure that lower bound is less than upper bound
