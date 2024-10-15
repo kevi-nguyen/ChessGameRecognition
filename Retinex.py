@@ -4,15 +4,9 @@ import numpy as np
 
 class Retinex:
     def get_ksize(self, sigma):
-        # opencv calculates ksize from sigma as
-        # sigma = 0.3*((ksize-1)*0.5 - 1) + 0.8
-        # then ksize from sigma is
-        # ksize = ((sigma - 0.8)/0.15) + 2.0
-
         return int(((sigma - 0.8) / 0.15) + 2.0)
 
     def get_gaussian_blur(self, img, ksize=0, sigma=5):
-        # if ksize == 0, then compute ksize from sigma
         if ksize == 0:
             ksize = self.get_ksize(sigma)
 
@@ -31,22 +25,18 @@ class Retinex:
         return np.log10(img) - np.log10(self.get_gaussian_blur(img, ksize=0, sigma=sigma) + 1.0)
 
     def msr(self, img, sigma_scales=[15, 80, 250], apply_normalization=True):
-        img = img.astype(np.float64) + 1.0  # Add 1.0 to avoid log(0)
+        img = img.astype(np.float64) + 1.0
 
         # Multi-scale retinex of an image
         # MSR(x,y) = sum(weight[i]*SSR(x,y, scale[i])), i = {1..n} scales
 
         msr = np.zeros(img.shape)
-        # for each sigma scale compute SSR
+
         for sigma in sigma_scales:
             msr += self.ssr(img, sigma)
 
-        # divide MSR by weights of each scale
-        # here we use equal weights
         msr = msr / len(sigma_scales)
 
-        # computed MSR could be in range [-k, +l], k and l could be any real value
-        # so normalize the MSR image values in range [0, 255]
         if apply_normalization:
             msr = cv2.normalize(msr, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8UC3)
 
@@ -56,7 +46,6 @@ class Retinex:
         '''Contrast stretch img by histogram equilization with black and white cap'''
 
         tot_pix = img.shape[1] * img.shape[0]
-        # no.of pixels to black-out and white-out
         low_count = tot_pix * low_per / 100
         high_count = tot_pix * (100 - high_per) / 100
 
@@ -68,22 +57,18 @@ class Retinex:
             ch_list = cv2.split(img)
 
         cs_img = []
-        # for each channel, apply contrast-stretch
         for i in range(len(ch_list)):
             ch = ch_list[i]
-            # cummulative histogram sum of channel
             cum_hist_sum = np.cumsum(cv2.calcHist([ch], [0], None, [256], (0, 256)))
 
-            # find indices for blacking and whiting out pixels
             li, hi = np.searchsorted(cum_hist_sum, (low_count, high_count))
             if (li == hi):
                 cs_img.append(ch)
                 continue
-            # lut with min-max normalization for [0-255] bins
+
             lut = np.array([0 if i < li
                             else (255 if i > hi else round((i - li) / (hi - li) * 255))
                             for i in np.arange(0, 256)], dtype='uint8')
-            # constrast-stretch channel
             cs_ch = cv2.LUT(ch, lut)
             cs_img.append(cs_ch)
 
@@ -100,7 +85,7 @@ class Retinex:
         # I'(x,y) = sum(Ic(x,y)), c={0...k-1}, k=no.of channels
 
         img = img.astype(np.float64) + 1.0
-        # Multi-scale retinex and don't normalize the output
+
         msr_img = self.msr(img, sigma_scales, apply_normalization=False)
         # Color-restoration function
         crf = beta * (np.log10(alpha * img) - np.log10(np.sum(img, axis=2, keepdims=True)))

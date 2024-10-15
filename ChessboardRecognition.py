@@ -8,63 +8,33 @@ from Retinex import Retinex
 class ChessboardRecognition:
 
     def transform_image(self, image, src_points, dst_points):
-        """
-        Transforms the image using the given source and destination points.
-
-        Parameters:
-        - image: The input image to be transformed.
-        - src_points: A list of four points (x, y) in the source image.
-        - dst_points: A list of four points (x, y) in the destination image.
-
-        Returns:
-        - The transformed image.
-        """
-        # Convert points to numpy arrays
         src_points = np.array(src_points, dtype='float32')
         dst_points = np.array(dst_points, dtype='float32')
 
-        # Compute the perspective transform matrix
         matrix = cv2.getPerspectiveTransform(src_points, dst_points)
 
-        # Get the size of the destination image
         width = int(max(dst_points[:, 0]) - min(dst_points[:, 0]))
         height = int(max(dst_points[:, 1]) - min(dst_points[:, 1]))
 
-        # Apply the perspective transformation
         transformed_image = cv2.warpPerspective(image, matrix, (width, height))
 
         return transformed_image
 
     def get_frame_resolution(self, frame):
-        # Get the resolution of the frame
         height, width, _ = frame.shape
-        # Define the destination points based on the resolution
+
         dst_points = [
-            (0, 0),  # Top-left corner
-            (width, 0),  # Top-right corner
-            (0, height),  # Bottom-left corner
-            (width, height)  # Bottom-right corner
+            (0, 0),
+            (width, 0),
+            (0, height),
+            (width, height)
         ]
         return dst_points
 
     def get_board_state(self, image):
-        """
-        Determine the board state and detect colors dynamically based on HSV ranges.
-
-        Parameters:
-        - image: Input image.
-        - width: Width of the image.
-        - height: Height of the image.
-
-        Returns:
-        - board_state: 2D list of board state with detected colors.
-        """
-
-        # cv2.imshow('Original Image', image)
         width, height, _ = image.shape
 
         msrcp = Retinex().msrcp(image)
-        # cv2.imshow('MSRCP Image', msrcp)
 
         # Process the image to get masks for blue and red colors
         blue_mask = ColorDetector().process_image(msrcp, 'blue')
@@ -105,15 +75,10 @@ class ChessboardRecognition:
                 elif cv2.countNonZero(red_mask[y1:y2, x1:x2]) > threshold:
                     board_state[i][j] = 'red'
 
-        # Display the image with cell lines
-        # cv2.imshow('Image with cell lines', res)
-
         return board_state
 
     def preprocess_image_for_green(self, image):
-        # Apply MSRCP for better color and contrast
         msrcp = Retinex().msrcp(image)
-        # cv2.imshow('MSRCP Image', msrcp)
 
         green_mask = ColorDetector().process_image(msrcp, 'green')
 
@@ -128,18 +93,8 @@ class ChessboardRecognition:
         return contours, green_mask, msrcp
 
     def find_chessboard_corners_green(self, frame):
-
-        # Preprocess the image to detect green markers
         contours, green_mask, msrcp = self.preprocess_image_for_green(frame)
 
-        #print(f"Number of contours: {len(contours)}")
-
-        # cv2.imshow('Green Mask', green_mask)
-        # cv2.imshow('MSRCP Image', msrcp)
-
-        # cv2.waitKey(0)
-
-        # Initialize variables for storing the detected corner coordinates
         green_corners = []
 
         # Filter contours to find the four green markers
@@ -171,12 +126,7 @@ class ChessboardRecognition:
         top_right = right_corners[0]
         bottom_right = right_corners[1]
 
-        #print(f"Top left: {top_left}, Top right: {top_right}, Bottom left: {bottom_left}, Bottom right: {bottom_right}")
-
         for point in [top_left, top_right, bottom_left, bottom_right]:
             cv2.circle(frame, point, 10, (0, 255, 0), -1)
-
-        # cv2.imshow('Detected Corners', frame)
-        # cv2.waitKey(0)
 
         return [top_left, top_right, bottom_left, bottom_right]

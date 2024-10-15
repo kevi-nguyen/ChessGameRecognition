@@ -5,15 +5,6 @@ class ChessboardStateLogic:
         return chr(cell[1] + ord('a')) + str(8 - cell[0])
 
     def chess_to_cell_notation(self, move_str):
-        """
-        Converts a move string to a tuple.
-
-        Parameters:
-        - move_str: String representing the move, e.g., 'e2e4'.
-
-        Returns:
-        - Tuple representing the move in the format ((start_row, start_col), (end_row, end_col)).
-        """
         start_col = ord(move_str[0]) - ord('a')
         start_row = 8 - int(move_str[1])
         end_col = ord(move_str[2]) - ord('a')
@@ -21,18 +12,6 @@ class ChessboardStateLogic:
         return ((start_row, start_col), (end_row, end_col))
 
     def find_moved_piece(self, prev_state, curr_state):
-        """
-        Finds the moved piece by comparing the previous and current board states.
-
-        Parameters:
-        - prev_state: 2D list representing the previous state of the board.
-        - curr_state: 2D list representing the current state of the board.
-
-        Returns:
-        - Tuple containing the move in UCI format
-        """
-
-        # Initialize the start and end positions
         start = end = second_start = None
 
         # Variables for the colours of the start and end positions to handle en passant
@@ -67,51 +46,37 @@ class ChessboardStateLogic:
         # Handle special cases
         if start and end:
             # Castling
-            if start and end:
-                # Castling
-                if second_start:
-                    # Check for blue castling (blue is on the 7th rank)
-                    if prev_state[7][4] == 'blue' and prev_state[7][7] == 'blue' and curr_state[7][4] is None and \
-                            curr_state[7][7] is None and curr_state[7][6] == 'blue' and curr_state[7][5] == 'blue':
-                        return 'e1g1'  # Kingside castling
-                    elif prev_state[7][4] == 'blue' and prev_state[7][0] == 'blue' and curr_state[7][4] is None and \
-                            curr_state[7][0] is None and curr_state[7][2] == 'blue' and curr_state[7][3] == 'blue':
-                        return 'e1c1'  # Queenside castling
+            if second_start:
+                # Check for blue castling (blue is on the 7th rank)
+                if prev_state[7][4] == 'blue' and prev_state[7][7] == 'blue' and curr_state[7][4] is None and \
+                        curr_state[7][7] is None and curr_state[7][6] == 'blue' and curr_state[7][5] == 'blue':
+                    return 'e1g1'  # Kingside castling
+                elif prev_state[7][4] == 'blue' and prev_state[7][0] == 'blue' and curr_state[7][4] is None and \
+                        curr_state[7][0] is None and curr_state[7][2] == 'blue' and curr_state[7][3] == 'blue':
+                    return 'e1c1'  # Queenside castling
 
-                    # Check for red castling (red is on the 0th rank)
-                    if prev_state[0][4] == 'red' and prev_state[0][7] == 'red' and curr_state[0][4] is None and \
-                            curr_state[0][7] is None and curr_state[0][6] == 'red' and curr_state[0][5] == 'red':
-                        return 'e8g8'  # Kingside castling
-                    elif prev_state[0][4] == 'red' and prev_state[0][0] == 'red' and curr_state[0][4] is None and \
-                            curr_state[0][0] is None and curr_state[0][2] == 'red' and curr_state[0][3] == 'red':
-                        return 'e8c8'  # Queenside castling
+                # Check for red castling (red is on the 0th rank)
+                if prev_state[0][4] == 'red' and prev_state[0][7] == 'red' and curr_state[0][4] is None and \
+                        curr_state[0][7] is None and curr_state[0][6] == 'red' and curr_state[0][5] == 'red':
+                    return 'e8g8'  # Kingside castling
+                elif prev_state[0][4] == 'red' and prev_state[0][0] == 'red' and curr_state[0][4] is None and \
+                        curr_state[0][0] is None and curr_state[0][2] == 'red' and curr_state[0][3] == 'red':
+                    return 'e8c8'  # Queenside castling
 
-                # En passant
-                if start_colour == end_colour:
-                    correct_start = start
-                else:
-                    correct_start = second_start
+            # En passant
+            if start_colour == end_colour:
+                correct_start = start
+            else:
+                correct_start = second_start
 
-                if correct_start and end:
-                    return correct_start + end
-                else:
-                    return None
+            if correct_start and end:
+                return correct_start + end
+            else:
+                return None
 
-            return start + end
-
-        return None
+        return start + end
 
     def update_board_state(self, board_state, move, special):
-        """
-        Updates the board state manually after a move.
-
-        Parameters:
-        - board_state: 2D list representing the current state of the board.
-        - move: Tuple representing the move in the format ((start_row, start_col), (end_row, end_col)).
-
-        Returns:
-        - Updated board state after the move.
-        """
         move = self.chess_to_cell_notation(move)
         start_pos, end_pos = move
         start_row, start_col = start_pos
@@ -168,10 +133,6 @@ class ChessboardStateLogic:
         return board_state
 
     def determine_orientation(self, initial_board_state):
-        """
-        Determine the orientation of the board based on the position of the blue king.
-        Returns one of 'bottom', 'top', 'left', 'right'.
-        """
         # Check for the Blue (White) king in the key positions
         if 'blue' in str(initial_board_state[7][4]):
             return 'bottom'
@@ -186,54 +147,30 @@ class ChessboardStateLogic:
         return 'bottom'
 
     def rotate_board_to_bottom(self, board_state, orientation):
-        """
-        Rotates the board state to the 'bottom' orientation.
-
-        Parameters:
-        - board_state: 2D list representing the current state of the board.
-        - orientation: String indicating the current orientation of the board ('bottom', 'top', 'left', 'right').
-
-        Returns:
-        - Rotated board state with the 'bottom' orientation.
-        """
-
         # Number of 90-degree clockwise rotations needed to get to 'bottom' orientation
         rotations = {'bottom': 0, 'right': 1, 'top': 2, 'left': 3}
 
-        # Get the number of 90-degree rotations needed
         num_rotations = rotations[orientation]
 
-        # Rotate the board the specified number of times
         for _ in range(num_rotations):
-            # Rotate the board 90 degrees clockwise
             board_state = [list(row) for row in zip(*board_state[::-1])]
 
         return board_state
 
     def transform_coordinates(self, i, j, orientation):
-        """
-        Transforms the board coordinates (i, j) based on the current board orientation.
-
-        Parameters:
-        - i: Row index (0 to 7).
-        - j: Column index (0 to 7).
-        - orientation: The current orientation of the board ('bottom', 'left', 'top', 'right').
-
-        Returns:
-        - Transformed (i_new, j_new) based on the orientation.
-        """
-        if orientation == 'bottom':  # Default orientation
+        if orientation == 'bottom':
             return i, j
-        elif orientation == 'left':  # 90° clockwise
+        elif orientation == 'left':
             return j, 7 - i
-        elif orientation == 'top':  # 180°
+        elif orientation == 'top':
             return 7 - i, 7 - j
-        elif orientation == 'right':  # 90° counterclockwise
+        elif orientation == 'right':
             return 7 - j, i
         else:
             raise ValueError("Invalid orientation. Must be 'bottom', 'left', 'top', or 'right'.")
 
     def coordinates_to_cobot_move(self, board_state, move, special, orientation, capture_blue, capture_red):
+        # Outputs i and j coordinates and current capture coordinates for the cobot
         move = self.chess_to_cell_notation(move)
         start_pos, end_pos = move
         start_row, start_col = start_pos
@@ -322,17 +259,6 @@ class ChessboardStateLogic:
                     str(end_i2), str(end_j2), str(capture_blue), str(capture_red)]
 
     def positions_to_string(self, start, end, orientation):
-        """
-        Converts the start and end positions into tuples after transforming based on the board orientation.
-
-        Parameters:
-        - start: A tuple (start_i, start_j) representing the start position.
-        - end: A tuple (end_i, end_j) representing the end position.
-        - orientation: The current orientation of the board ('bottom', 'left', 'top', 'right').
-
-        Returns:
-        - Two tuples representing the transformed start and end positions.
-        """
         # Transform coordinates based on the orientation
         start_transformed = self.transform_coordinates(start[0], start[1], orientation)
         end_transformed = self.transform_coordinates(end[0], end[1], orientation)
@@ -340,32 +266,11 @@ class ChessboardStateLogic:
         return start_transformed[0], start_transformed[1], end_transformed[0], end_transformed[1]
 
     def board_to_string(self, board_state):
-        """
-        Converts the board state (2D list) to a string format for CPEE.
-        - None -> '0'
-        - 'blue' -> '1'
-        - 'red' -> '2'
-
-        Parameters:
-        - board_state: 2D list representing the current state of the board.
-
-        Returns:
-        - A string representation of the board.
-        """
         return ''.join(
             [''.join([str(0) if cell is None else str(1) if cell == 'blue' else str(2) for cell in row]) for row in
              board_state])
 
     def string_to_board(self, board_string):
-        """
-        Converts a string representation back to a board state (2D list).
-
-        Parameters:
-        - board_string: String representation of the board state.
-
-        Returns:
-        - 2D list representing the current state of the board.
-        """
         board_size = 8
         return [[None if c == '0' else 'blue' if c == '1' else 'red' for c in board_string[i:i + board_size]] for i in
                 range(0, len(board_string), board_size)]
