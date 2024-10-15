@@ -378,8 +378,8 @@ class ChessboardStateLogic:
         return capture_blue
 
     def increment_red_capture(self, capture_red):
-        if capture_red[0] == -1:
-            capture_red = (-1, capture_red[1] + 1)
+        if capture_red[1] == 7:
+            capture_red = (0, capture_red[1] - 1)
         else:
-            capture_red = (capture_red[0] - 1, capture_red[1])
+            capture_red = (capture_red[0] + 1, capture_red[1])
         return capture_red
