@@ -9,7 +9,9 @@ This repository solely contains the functionalities to process images, detect th
 
 
 ## Features
+For the full demonstration video click [here](./demo/demo.mp4).
 
+![Animation](./demo/demo.gif)
 - **Color-Based Chessboard Recognition**: Identifies chess piece positions based on color (blue for white pieces and red for black pieces) and determines their positions on the board.
 - **Chessboard Corner Detection**: Detects 4 green-marked chessboard corners.
 - **Automatic Move Detection**: Tracks and identifies chess moves by comparing previous board states to the current one.
@@ -41,9 +43,8 @@ python-multipart
 Additional Requirements
 - Chess Pieces: The pieces should be colored blue and red to represent white and black pieces, respectively.
 - Chessboard Corners: Use green markers for the corners of the chessboard. These are mandatory to recognize the chessboard accurately.
-- Image Orientation: The snapshot of the camera must be adjusted so that the defined “bottom” orientation aligns with the bottom side of the image. The “bottom” refers to the side where the player stands (the opposite side of the robot side). As you can see here:
-  ![Animation](./demo/demo_orientation.gif)
-To do that you can rotate the camera output in the camera service:
+- Image Orientation: The snapshot of the camera must be adjusted so that the defined “bottom” orientation aligns with the bottom side of the image. The “bottom” refers to the side where the player stands (the opposite side of the robot side). As you can see [here](./demo/demo_orientation.gif).
+  To do that you can rotate the camera output in the camera service:
    ```python
    rotated_image = cv2.rotate(rgb_frame, cv2.ROTATE_90_CLOCKWISE)
    ```
