@@ -19,6 +19,8 @@ class ResponseData(BaseModel):
     sec_start_j: str
     sec_end_i: str
     sec_end_j: str
+    capture_blue: str
+    capture_red: str
 
 
 @app.post("/update_chessboard")
@@ -71,11 +73,17 @@ def is_special_move(fen: str = Form(...), move: str = Form(...)):
 def coordinates_to_cobot_move(board_state_string: str = Form(...),
                               move: str = Form(...),
                               special: bool = Form(...),
-                              orientation: str = Form(...)):
+                              orientation: str = Form(...),
+                              capture_blue: str = Form(...),
+                              capture_red: str = Form(...)):
     board_state = ChessboardStateLogic().string_to_board(board_state_string)
-    result = ChessboardStateLogic().coordinates_to_cobot_move(board_state, move, special, orientation)
+    capture_blue = tuple(map(int, capture_blue.strip('()').split(',')))
+    capture_red = tuple(map(int, capture_red.strip('()').split(',')))
+    result = ChessboardStateLogic().coordinates_to_cobot_move(board_state, move, special, orientation, capture_blue,
+                                                              capture_red)
     return ResponseData(double_move=result[0], start_i=result[1], start_j=result[2], end_i=result[3], end_j=result[4],
-                        sec_start_i=result[5], sec_start_j=result[6], sec_end_i=result[7], sec_end_j=result[8])
+                        sec_start_i=result[5], sec_start_j=result[6], sec_end_i=result[7], sec_end_j=result[8],
+                        capture_blue=result[9], capture_red=result[10])
 
 
 if __name__ == "__main__":
