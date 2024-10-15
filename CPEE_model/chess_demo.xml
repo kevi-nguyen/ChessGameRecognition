@@ -1,0 +1,1228 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements>
+    <chessboard>rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</chessboard>
+    <current_board_state/>
+    <double_move/>
+    <frame_str/>
+    <initial_board_state/>
+    <is_checkmate>false</is_checkmate>
+    <is_illegal/>
+    <is_special/>
+    <move/>
+    <src_points/>
+    <start_i/>
+    <cobot_move/>
+    <dst_points/>
+    <start_j/>
+    <end_i/>
+    <orientation/>
+    <end_j/>
+    <sec_start_i/>
+    <sec_start_j/>
+    <sec_end_i/>
+    <starting_board_state>2222222222222222000000000000000000000000000000001111111111111111</starting_board_state>
+    <sec_end_j/>
+    <capture_blue>(7,8)</capture_blue>
+    <capture_red>(0,-1)</capture_red>
+  </dataelements>
+  <endpoints>
+    <timeout>https://cpee.org/services/timeout.php</timeout>
+    <subprocess>https://cpee.org/flow/start/url/</subprocess>
+    <update_chessboard>https://notable-driving-racer.ngrok-free.app/update_chessboard</update_chessboard>
+    <check_illegal_move>https://notable-driving-racer.ngrok-free.app/check_illegal_move</check_illegal_move>
+    <check_game_end>https://notable-driving-racer.ngrok-free.app/check_game_end</check_game_end>
+    <get_move>https://notable-driving-racer.ngrok-free.app/get_move</get_move>
+    <update_board_state>https://notable-driving-racer.ngrok-free.app/update_board_state</update_board_state>
+    <check_special_move>https://notable-driving-racer.ngrok-free.app/check_special_move</check_special_move>
+    <get_cobot_move>https://notable-driving-racer.ngrok-free.app/get_cobot_move</get_cobot_move>
+    <get_board_state>https://notable-driving-racer.ngrok-free.app/get_board_state</get_board_state>
+    <initialize_game>https://notable-driving-racer.ngrok-free.app/initialize_game</initialize_game>
+    <get_best_move>https://notable-driving-racer.ngrok-free.app/get_best_move</get_best_move>
+    <wait_for_button_press>https://notable-driving-racer.ngrok-free.app/wait_for_button_press</wait_for_button_press>
+    <get_snapshot>https://notable-driving-racer.ngrok-free.app/get_snapshot</get_snapshot>
+    <move_cam_position>https://lab.bpm.in.tum.de/ur/programs/KevinNguyenChessBot/HomeToCameraPosition.urp/wait</move_cam_position>
+    <move_cobot>https://lab.bpm.in.tum.de/ur/programs/KevinNguyenChessBot/MoveBasePosition.urp/wait</move_cobot>
+    <pick_up_piece>https://lab.bpm.in.tum.de/ur/programs/KevinNguyenChessBot/PickUpPiece.urp/wait</pick_up_piece>
+    <put_down_piece>https://lab.bpm.in.tum.de/ur/programs/KevinNguyenChessBot/PutDownPiece.urp/wait</put_down_piece>
+    <set_i_value>https://lab.bpm.in.tum.de/ur/registers/input/int/0</set_i_value>
+    <set_j_value>https://lab.bpm.in.tum.de/ur/registers/input/int/1</set_j_value>
+  </endpoints>
+  <attributes>
+    <info>chess_demo</info>
+    <theme>extended</theme>
+    <creator>Christine Ashcreek</creator>
+    <author>Christine Ashcreek</author>
+    <modeltype>CPEE</modeltype>
+    <guarded>none</guarded>
+    <guarded_id/>
+    <model_uuid>d3f3350d-d9fb-4bc9-83a5-11f7c981b386</model_uuid>
+    <model_version/>
+    <design_stage>development</design_stage>
+    <design_dir>Teaching.dir/Prak.dir/TUM-Prak-24-SS.dir/KevinNguyenChess.dir</design_dir>
+  </attributes>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a11" endpoint="move_cam_position">
+        <parameters>
+          <label>Move to camera position</label>
+          <method>:put</method>
+          <arguments/>
+        </parameters>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+        </documentation>
+      </call>
+      <call id="a1" endpoint="get_snapshot">
+        <parameters>
+          <label>Get snapshot of chessboard</label>
+          <method>:get</method>
+          <arguments/>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.frame_str = result</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <call id="a2" endpoint="initialize_game">
+        <parameters>
+          <label>Initialize chess game</label>
+          <method>:post</method>
+          <arguments>
+            <frame_str>!data.frame_str</frame_str>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.initial_board_state = result['board_state']
+data.src_points = result['src_points']
+data.dst_points = result['dst_points']
+data.orientation = result['orientation']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <loop mode="pre_test" condition="data.is_checkmate == false">
+        <_probability>
+          <_probability_min/>
+          <_probability_max/>
+          <_probability_avg/>
+        </_probability>
+        <call id="a3" endpoint="wait_for_button_press">
+          <parameters>
+            <label>Wait for button press</label>
+            <method>:get</method>
+            <arguments/>
+          </parameters>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+          </documentation>
+        </call>
+        <call id="a4" endpoint="get_snapshot">
+          <parameters>
+            <label>Get snapshot of chessboard</label>
+            <method>:get</method>
+            <arguments/>
+          </parameters>
+          <code>
+            <prepare/>
+            <finalize output="result">data.frame_str = result</finalize>
+            <update output="result"/>
+            <rescue output="result"/>
+          </code>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+            <code>
+              <description/>
+            </code>
+          </documentation>
+        </call>
+        <call id="a5" endpoint="get_board_state">
+          <parameters>
+            <label>Get current board state</label>
+            <method>:post</method>
+            <arguments>
+              <frame_str>!data.frame_str</frame_str>
+              <src_points_str>!data.src_points</src_points_str>
+              <dst_points_str>!data.dst_points</dst_points_str>
+              <orientation>!data.orientation</orientation>
+            </arguments>
+          </parameters>
+          <code>
+            <prepare/>
+            <finalize output="result">data.current_board_state = result</finalize>
+            <update output="result"/>
+            <rescue output="result"/>
+          </code>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+            <code>
+              <description/>
+            </code>
+          </documentation>
+        </call>
+        <call id="a6" endpoint="get_move">
+          <parameters>
+            <label>Find moved piece</label>
+            <method>:post</method>
+            <arguments>
+              <prev_state_string>!data.initial_board_state</prev_state_string>
+              <curr_state_string>!data.current_board_state</curr_state_string>
+            </arguments>
+          </parameters>
+          <code>
+            <prepare/>
+            <finalize output="result">data.move = result</finalize>
+            <update output="result"/>
+            <rescue output="result"/>
+          </code>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+            <code>
+              <description/>
+            </code>
+          </documentation>
+        </call>
+        <choose mode="exclusive">
+          <alternative condition="data.move == null">
+            <_probability>
+              <_probability_min/>
+              <_probability_max/>
+              <_probability_avg/>
+            </_probability>
+            <choose mode="exclusive">
+              <alternative condition="data.current_board_state == data.starting_board_state">
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+                <call id="a7" endpoint="get_best_move">
+                  <parameters>
+                    <label>Get best move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.move = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a8" endpoint="check_special_move">
+                  <parameters>
+                    <label>Check special move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                      <move>!data.move</move>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.is_special = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a9" endpoint="get_cobot_move">
+                  <parameters>
+                    <label>Get move coordinates for cobot</label>
+                    <method>:post</method>
+                    <arguments>
+                      <board_state_string>!data.current_board_state</board_state_string>
+                      <move>!data.move</move>
+                      <special>!data.is_special</special>
+                      <orientation>!data.orientation</orientation>
+                      <capture_blue>!data.capture_blue</capture_blue>
+                      <capture_red>!data.capture_red</capture_red>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.double_move = result['double_move']
+data.start_i = result['start_i']
+data.start_j = result['start_j']
+data.end_i = result['end_i']
+data.end_j = result['end_j']
+data.sec_start_i = result['sec_start_i']
+data.sec_start_j = result['sec_start_j']
+data.sec_end_i = result['sec_end_i']
+data.sec_end_j = result['sec_end_j']
+data.capture_blue = result['capture_blue']
+data.capture_red = result['capture_red']</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a10" endpoint="subprocess">
+                  <parameters>
+                    <label>Perform chess move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <behavior>wait_running</behavior>
+                      <url>https://cpee.org/hub/server/Teaching.dir/Prak.dir/TUM-Prak-24-SS.dir/KevinNguyenChess.dir/chess_move.xml</url>
+                      <init>
+                        <double_move>!data.double_move</double_move>
+                        <start_i>!data.start_i</start_i>
+                        <start_j>!data.start_j</start_j>
+                        <end_i>!data.end_i</end_i>
+                        <end_j>!data.end_j</end_j>
+                        <sec_start_i>!data.sec_start_i</sec_start_i>
+                        <sec_start_j>!data.sec_start_j</sec_start_j>
+                        <sec_end_i>!data.sec_end_i</sec_end_i>
+                        <sec_end_j>!data.sec_end_j</sec_end_j>
+                      </init>
+                      <endpoints/>
+                      <attributes/>
+                      <customization/>
+                    </arguments>
+                  </parameters>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                  </documentation>
+                </call>
+                <call id="a37" endpoint="move_cam_position">
+                  <parameters>
+                    <label>Move to camera position</label>
+                    <method>:put</method>
+                    <arguments/>
+                  </parameters>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                  </documentation>
+                </call>
+                <call id="a15" endpoint="update_chessboard">
+                  <parameters>
+                    <label>Update chessboard</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                      <move>!data.move</move>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.chessboard = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a36" endpoint="update_board_state">
+                  <parameters>
+                    <label>Update initial board state</label>
+                    <method>:post</method>
+                    <arguments>
+                      <board_state_string>!data.current_board_state</board_state_string>
+                      <move>!data.move</move>
+                      <special>!data.is_special</special>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.initial_board_state = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <manipulate id="a20" label="Update current board state">data.current_board_state = data.initial_board_state</manipulate>
+              </alternative>
+              <otherwise/>
+            </choose>
+          </alternative>
+          <otherwise>
+            <call id="a13" endpoint="check_illegal_move">
+              <parameters>
+                <label>Check illegal move</label>
+                <method>:post</method>
+                <arguments>
+                  <fen>!data.chessboard</fen>
+                  <move>!data.move</move>
+                </arguments>
+              </parameters>
+              <code>
+                <prepare/>
+                <finalize output="result">data.is_illegal = result</finalize>
+                <update output="result"/>
+                <rescue output="result"/>
+              </code>
+              <annotations>
+                <_generic/>
+                <_timing>
+                  <_timing_weight/>
+                  <_timing_avg/>
+                  <explanations/>
+                </_timing>
+                <_shifting>
+                  <_shifting_type>Duration</_shifting_type>
+                </_shifting>
+                <_context_data_analysis>
+                  <probes/>
+                  <ips/>
+                </_context_data_analysis>
+                <report>
+                  <url/>
+                </report>
+                <_notes>
+                  <_notes_general/>
+                </_notes>
+              </annotations>
+              <documentation>
+                <input/>
+                <output/>
+                <implementation>
+                  <description/>
+                </implementation>
+                <code>
+                  <description/>
+                </code>
+              </documentation>
+            </call>
+            <choose mode="exclusive">
+              <alternative condition="data.is_illegal == false">
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+                <call id="a14" endpoint="update_chessboard">
+                  <parameters>
+                    <label>Update chessboard</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                      <move>!data.move</move>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.chessboard = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a17" endpoint="get_best_move">
+                  <parameters>
+                    <label>Get best move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.move = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a18" endpoint="check_special_move">
+                  <parameters>
+                    <label>Check special move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                      <move>!data.move</move>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.is_special = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a19" endpoint="get_cobot_move">
+                  <parameters>
+                    <label>Get move coordinates for cobot</label>
+                    <method>:post</method>
+                    <arguments>
+                      <board_state_string>!data.current_board_state</board_state_string>
+                      <move>!data.move</move>
+                      <special>!data.is_special</special>
+                      <orientation>!data.orientation</orientation>
+                      <capture_blue>!data.capture_blue</capture_blue>
+                      <capture_red>!data.capture_red</capture_red>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.double_move = result['double_move']
+data.start_i = result['start_i']
+data.start_j = result['start_j']
+data.end_i = result['end_i']
+data.end_j = result['end_j']
+data.sec_start_i = result['sec_start_i']
+data.sec_start_j = result['sec_start_j']
+data.sec_end_i = result['sec_end_i']
+data.sec_end_j = result['sec_end_j']
+data.capture_blue = result['capture_blue']
+data.capture_red = result['capture_red']</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a16" endpoint="subprocess">
+                  <parameters>
+                    <label>Perform chess move</label>
+                    <method>:post</method>
+                    <arguments>
+                      <behavior>wait_running</behavior>
+                      <url>https://cpee.org/hub/server/Teaching.dir/Prak.dir/TUM-Prak-24-SS.dir/KevinNguyenChess.dir/chess_move.xml</url>
+                      <init>
+                        <double_move>!data.double_move</double_move>
+                        <start_i>!data.start_i</start_i>
+                        <start_j>!data.start_j</start_j>
+                        <end_i>!data.end_i</end_i>
+                        <end_j>!data.end_j</end_j>
+                        <sec_start_i>!data.sec_start_i</sec_start_i>
+                        <sec_start_j>!data.sec_start_j</sec_start_j>
+                        <sec_end_i>!data.sec_end_i</sec_end_i>
+                        <sec_end_j>!data.sec_end_j</sec_end_j>
+                      </init>
+                      <endpoints/>
+                      <attributes/>
+                      <customization/>
+                    </arguments>
+                  </parameters>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                  </documentation>
+                </call>
+                <call id="a38" endpoint="move_cam_position">
+                  <parameters>
+                    <label>Move to camera position</label>
+                    <method>:put</method>
+                    <arguments/>
+                  </parameters>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                  </documentation>
+                </call>
+                <call id="a21" endpoint="update_chessboard">
+                  <parameters>
+                    <label>Update chessboard</label>
+                    <method>:post</method>
+                    <arguments>
+                      <fen>!data.chessboard</fen>
+                      <move>!data.move</move>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.chessboard = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <call id="a22" endpoint="update_board_state">
+                  <parameters>
+                    <label>Update initial board state</label>
+                    <method>:post</method>
+                    <arguments>
+                      <board_state_string>!data.current_board_state</board_state_string>
+                      <move>!data.move</move>
+                      <special>!data.is_special</special>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.initial_board_state = result</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <manipulate id="a23" label="Update current board state">data.current_board_state = data.initial_board_state</manipulate>
+              </alternative>
+              <otherwise/>
+            </choose>
+          </otherwise>
+        </choose>
+        <call id="a12" endpoint="check_game_end">
+          <parameters>
+            <label>Check for checkmate</label>
+            <method>:post</method>
+            <arguments>
+              <fen>!data.chessboard</fen>
+            </arguments>
+          </parameters>
+          <code>
+            <prepare/>
+            <finalize output="result">data.is_checkmate = result</finalize>
+            <update output="result"/>
+            <rescue output="result"/>
+          </code>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+            <code>
+              <description/>
+            </code>
+          </documentation>
+        </call>
+      </loop>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+</testset>
