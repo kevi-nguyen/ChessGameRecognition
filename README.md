@@ -2,7 +2,11 @@
 
 This repository contains the core component of the Chess Project as part of for the TUM master lab "Advanced Practical Course - Sustainable Process Automation: Humans, Software and the Mediator Pattern (IN2128, IN2106, IN4303)".
 The project implements a chess game recognition system using computer vision. The system captures a snapshot of the chessboard, processes the image to recognize the positions of chess pieces based on color, and then transform the coordinates, allowing a robot to interact with the chessboard. The game logic is integrated with Stockfish to determine the best possible moves, and provides RESTful services for each of the functionalities.
-This repository solely contains the functionalities to process images, detect the chessboard/pieces, and to display and manage the current chessboard state. Other essential services will be linked below.
+This repository solely contains the functionalities to process images, detect the chessboard/pieces, and to display and manage the current chessboard state. Other essential services are the following:
+- [Stockfish-Service](https://github.com/kevi-nguyen/stockfish-service)
+- [Button-Service](https://github.com/kevi-nguyen/button-service)
+- [Intel RealSense Camera-Service](https://github.com/kevi-nguyen/intel-realsense-camera)
+
 
 ## Features
 
@@ -13,7 +17,7 @@ This repository solely contains the functionalities to process images, detect th
 - **Robot Control**: Translates chess moves into robot coordinates to make physical movements on the chessboard.
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
 
-- **FastAPI Integration**: Provides a handful RESTful API interfaces for managing chess games and processing snapshots.
+(See linked repositories)
 - **Stockfish Integration**: Utilizes Stockfish to compute the best move for the robot after each player move.
 - **Button Integration**: Recognizes physical button input to signal the robots turn.
 - **Camera Snapshot Input**: Initializes a coloured video stream pipeline to get snapshots from the chessboard upon requests.
@@ -37,13 +41,19 @@ python-multipart
 Additional Requirements
 - Chess Pieces: The pieces should be colored blue and red to represent white and black pieces, respectively.
 - Chessboard Corners: Use green markers for the corners of the chessboard. These are mandatory to recognize the chessboard accurately.
-- Image Orientation: The images must be adjusted so that the defined “bottom” orientation aligns with the bottom side of the image. The “bottom” refers to the side where the player stands in opposition to the robot. Then you will able to set up the pieces side the way you like - the recognition system will automatically rotate the board to "bottom".
+- Image Orientation: The snapshot of the camera must be adjusted so that the defined “bottom” orientation aligns with the bottom side of the image. The “bottom” refers to the side where the player stands (the opposite side of the robot side). As you can see here:
+  ![Animation](./demo/demo_orientation.gif)
+To do that you can rotate the camera output in the camera service:
+   ```python
+   rotated_image = cv2.rotate(rgb_frame, cv2.ROTATE_90_CLOCKWISE)
+   ```
+   After correctly adjusting the camera output you are able to set up the pieces the way you like - the recognition system will automatically recognize where the blue/white side is and adjust the coordinates for the cobot accordingly. So you can play from left to right, top to bottom, whatever you prefer.
 
 Prerequites for a full chess game with this repository
 - Button: A physical button is used to signal the robot its turn.
 - Robot Arm: A robotic arm is used to interact with the chess pieces.
 - Intel RealSense Camera: Ensure that an Intel RealSense camera is used for capturing the chessboard and pieces.
-- Process Engine: An orchestrating process engine is required to manage the interactions between the provided services and the robot.
+- Process Engine: An orchestrating process engine is required to manage the interactions between the provided services and the robot. Have a look at the [Model](./CPEE_model) folder to get an insight of the chess game process
 
 ## Installation
 
