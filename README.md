@@ -1,35 +1,31 @@
 # Chess Game Recognition
 
-This repository contains the Chess Project as part of for the TUM master lab "Advanced Practical Course - Sustainable Process Automation: Humans, Software and the Mediator Pattern (IN2128, IN2106, IN4303)".
+This repository contains the core component of the Chess Project as part of for the TUM master lab "Advanced Practical Course - Sustainable Process Automation: Humans, Software and the Mediator Pattern (IN2128, IN2106, IN4303)".
 The project implements a chess game recognition system using computer vision. The system captures a snapshot of the chessboard, processes the image to recognize the positions of chess pieces based on color, and then transform the coordinates, allowing a robot to interact with the chessboard. The game logic is integrated with Stockfish to determine the best possible moves, and provides RESTful services for each of the functionalities.
+This repository solely contains the functionalities to process images, detect the chessboard/pieces, and to display and manage the current chessboard state. Other essential services will be linked below.
 
 ## Features
 
-- **Color-Based Chessboard Recognition**: Identifies chess pieces based on color (blue for white pieces and red for black pieces) and determines their positions on the board.
+- **Color-Based Chessboard Recognition**: Identifies chess piece positions based on color (blue for white pieces and red for black pieces) and determines their positions on the board.
+- **Chessboard Corner Detection**: Detects 4 green-marked chessboard corners.
 - **Automatic Move Detection**: Tracks and identifies chess moves by comparing previous board states to the current one.
-- **Stockfish Integration**: Utilizes Stockfish to compute the best move for the robot after each player move.
+- **Chess Logic Mapping**: Validates chess moves, board states and identifies single pieces through parallel mapping with a virtual chessboard.
 - **Robot Control**: Translates chess moves into robot coordinates to make physical movements on the chessboard.
 - **Base64 Encoded Image Processing**: The recognition system expects a chessboard image encoded in Base64 format and will decode it and further operate on it.
+
+- **FastAPI Integration**: Provides a handful RESTful API interfaces for managing chess games and processing snapshots.
+- **Stockfish Integration**: Utilizes Stockfish to compute the best move for the robot after each player move.
 - **Button Integration**: Recognizes physical button input to signal the robots turn.
 - **Camera Snapshot Input**: Initializes a coloured video stream pipeline to get snapshots from the chessboard upon requests.
-- **FastAPI Integration**: Provides a handful RESTful API interfaces in a microservice architecture for managing chess games and processing snapshots.
 
 ## Requirements
 
-- Python 3.x
-- OpenCV for image processing.
-- FastAPI for web services.
-- Stockfish for chess AI.
-- Numpy for matrix operations.
-- ... see below
-
-The project dependencies can be installed using `pip`:
+The project dependencies (requirements.txt) can be installed using `pip`:
 
 ```
 opencv-python
 opencv-python-headless
 python-chess
-stockfish
 fastapi
 uvicorn
 numpy
@@ -37,15 +33,6 @@ requests
 chess
 pydantic
 python-multipart
-pyserial
-pyrealsense2-macosx
-anyio
-h11
-jinja2
-setuptools
-wheel
-certifi
-urllib3
 ```
 Additional Requirements
 - Chess Pieces: The pieces should be colored blue and red to represent white and black pieces, respectively.
@@ -55,15 +42,15 @@ Additional Requirements
 Prerequites for a full chess game with this repository
 - Button: A physical button is used to signal the robot its turn.
 - Robot Arm: A robotic arm is used to interact with the chess pieces.
-- Process Engine: An orchestrating process engine is required to manage the interactions between the provided services and the robot.
 - Intel RealSense Camera: Ensure that an Intel RealSense camera is used for capturing the chessboard and pieces.
+- Process Engine: An orchestrating process engine is required to manage the interactions between the provided services and the robot.
 
 ## Installation
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/kevi-nguyen/ChessGameRecognition.git
-   cd ChessGameRecognition
+   git clone https://github.com/kevi-nguyen/chess-game-recognition.git
+   cd chess-game-recognition
    ```
 
 2. **Install Dependencies**:
@@ -71,62 +58,13 @@ Prerequites for a full chess game with this repository
    ```bash
    pip install -r requirements.txt
    ```
-3. **Adjust Paths and Ports**:
-   Before running the Chess Game Recognition system, you may need to adjust certain file paths and port configurations for the correct operation of key components like **Stockfish** and the **button integration**.
 
-
-   **Stockfish Path Configuration**:
-      The project relies on Stockfish for chess move analysis, and it needs to know where the Stockfish executable is located. By default, the code will look for `stockfish` (or `stockfish.exe` on Windows). However, this assumes either:
-        - The executable is in the same directory as the script.
-        - Or it is in the system's `PATH` environment variable.
-  
-      If Stockfish is installed in a custom directory, you can either:
-      1. Place `stockfish.exe` in the same folder as your script.
-      2. Set the correct path explicitly in the code, like so:
-
-      ```python
-      STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or 'C:/path/to/stockfish.exe'
-      stockfish = Stockfish(path=STOCKFISH_PATH)
-      ```
-
-      For Linux systems, update the path similarly with the appropriate executable path, such as:
-
-      ```python
-      STOCKFISH_PATH = os.getenv('STOCKFISH_PATH') or '/usr/local/bin/stockfish'
-      ```
-   **Button Integration (Serial Port Adjustment)**:
-      If you're using a button connected via a serial port, the `port` variable in the code needs to match the serial port available on your computer.
-      The current port is configured for a macOS system:
-      ```python
-      port = '/dev/tty.usbserial-AQ027FTG'
-      ```
-      On a Windows system, you will need to change this to the appropriate **COM port** (e.g., `COM3`), and on Linux, it might look like `/dev/ttyUSB0`. Adjust the code as follows:
-
-      - For **Windows**:
-      ```python
-      port = 'COM3'  # Replace with the correct COM port number
-      ```
-
-      - For **Linux**:
-      ```python
-      port = '/dev/ttyUSB0'  # Replace with the correct USB serial port
-      ```
-
-      Ensure that the correct serial driver is installed and that the device is properly connected.
-
-5. **Run the Services**:
-   There will be five different services, which can be started independently:
-   - Chessboard-API
-   - ChessboardRecognition-API
-   - Button-API
-   - Stockfish-API
-   - Camera
-   
+4. **Run the Services**:
    To start the chess game recognition services, use the following command:
    ```bash
-   python <specific service>.py
+   python Chessboard-API.py
    ```
-   This will start the FastAPI service on different URLs for example `http://0.0.0.0:8080`, and it will expose endpoints for interacting with the chessboard, recognizing moves, and sending them to the robot.
+   This will start the FastAPI service on `http://0.0.0.0:8081`.
 
 ## Overview of the Game Structure
 
@@ -183,33 +121,3 @@ The system employs an advanced image processing pipeline to ensure accurate dete
 
 4. **Analyzing Chess Piece Colors**:
    Once the masks are generated, the system analyzes the image to locate blue and red pieces based on the dynamically predefined HSV ranges. This allows the system to determine the position of each piece on the board.
-
-### Conclusion
-
-With this approach, the system ensures accurate detection of chess pieces in various lighting conditions and maintains precise tracking of the chess game.
-
-By following the detailed steps and integrating color recognition with Stockfish and robotic control, the chess game recognition system provides a seamless interface for human-robot chess interaction.
-
----
-
-MIT License
-
-Copyright (c) 2024 Kevin Nguyen
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-1. The above copyright notice and this permission notice shall be included in all
-   copies or substantial portions of the Software.
-
-2. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
