@@ -24,6 +24,38 @@ For the full demonstration video click [here](./demo/demo.mp4).
 - **Button Integration**: Recognizes physical button input to signal the robots turn.
 - **Camera Snapshot Input**: Initializes a coloured video stream pipeline to get snapshots from the chessboard upon requests.
 
+**API-Endpoints**:
+
+There will be several RESTful endpoints exposed which can be called to recognize and manage the board state.
+
+1. '/update_chessboard'
+	•	Updates the chessboard state based on a provided FEN string and move.
+
+2. '/check_illegal_move'
+	•	Verifies if a move is illegal given the current FEN string and move.
+
+3. '/check_game_end'
+	•	Checks if the game has reached an end condition, such as checkmate, using the current FEN string.
+
+4. '/get_move'
+	•	Compares two board states and identifies the moved piece.
+
+5. '/update_board_state'
+	•	Updates the board state with blue and red pieces using the current board string, a move, and any special conditions (like castling).
+
+6. '/check_special_move'
+	•	Checks if the given move is a special move (e.g., castling, en passant) using the current FEN string.
+
+7. '/get_cobot_move'
+	•	Converts the chess move coordinates into a move format suitable for the robot, considering special conditions like orientation and coordinates to put the captured pieces.
+
+8. '/get_board_state'
+	•	Processes an image of the chessboard, transforms it based on provided points, and returns the detected board state.
+
+9. '/initialize_game'
+	•	Initializes the game by processing an image to detect the chessboard corners and determine the starting orientation and state.
+
+
 ## Requirements
 
 The project dependencies (requirements.txt) can be installed using `pip`:
@@ -70,7 +102,7 @@ Prerequites for a full chess game with this repository
    pip install -r requirements.txt
    ```
 
-4. **Run the Services**:
+4. **Run the Service**:
    To start the chess game recognition services, use the following command:
    ```bash
    python Chessboard-API.py
