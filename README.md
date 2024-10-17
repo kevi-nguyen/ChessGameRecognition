@@ -7,6 +7,7 @@ This repository solely contains the functionalities to process images, detect th
 - [Button-Service](https://github.com/kevi-nguyen/button-service)
 - [Intel RealSense Camera-Service](https://github.com/kevi-nguyen/intel-realsense-camera)
 
+Also feel free to have a look at the [Project Journey Documentation](./PROJECT_JOURNEY.md) to get an insight of the challenges and difficulties of this project.
 
 ## Features
 For the full demonstration video click [here](./demo/demo.mp4).
@@ -134,7 +135,28 @@ The system employs an advanced image processing pipeline to ensure accurate dete
 
 1. **Multi-Scale Retinex with Color Preservation**:
    The image is pre-processed using a technique called Multi-Scale Retinex with Color Preservation (MSRCP) to maintain color constancy. This reduces the effect of lighting variations on color detection. Gaussian blur, histogram equalization, and other operations are applied to enhance image quality.
-   
+
+	Multi-Scale Retinex with Color Preservation Algorithm:
+   ```python
+	def msrcp(self, img, sigma_scales=[15, 80, 250], low_per=1, high_per=1):
+		
+		int_img = (np.sum(img, axis=2) / img.shape[2]) + 1.0
+		
+		msr_int = self.msr(int_img, sigma_scales)
+		
+		msr_cb = self.color_balance(msr_int, low_per, high_per)
+		
+		B = 256.0 / (np.max(img, axis=2) + 1.0)
+		
+		BB = np.array([B, msr_cb / int_img])
+		
+		A = np.min(BB, axis=0)
+		
+		msrcp = np.clip(np.expand_dims(A, 2) * img, 0.0, 255.0)
+		
+		return msrcp.astype(np.uint8)
+   ```
+
    Example of converting to HSV color space and applying histogram equalization:
    ```python
    # Convert the image to HSV color space
@@ -144,7 +166,7 @@ The system employs an advanced image processing pipeline to ensure accurate dete
    image_hsv[:, :, 2] = cv2.equalizeHist(image_hsv[:, :, 2])
    ```
 
-2. **Masking and Color Segmentation**:
+3. **Masking and Color Segmentation**:
    For detecting specific colors (blue and red in this case), the system computes histograms for each HSV channel, focusing on the predefined hue range for each color. The histogram data is then used to create a mask that isolates the regions of the image containing the target color.
 
    Example:
@@ -159,7 +181,7 @@ The system employs an advanced image processing pipeline to ensure accurate dete
    mask = cv2.inRange(image_hsv, lower_bound, upper_bound)
    ```
 
-3. **Morphological Operations**:
+4. **Morphological Operations**:
    After masking, the system applies morphological operations (like erosion and dilation) to clean up the mask, removing noise and enhancing the regions that represent chess pieces.
    
    ```python
@@ -167,5 +189,5 @@ The system employs an advanced image processing pipeline to ensure accurate dete
    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
    ```
 
-4. **Analyzing Chess Piece Colors**:
+5. **Analyzing Chess Piece Colors**:
    Once the masks are generated, the system analyzes the image to locate blue and red pieces based on the dynamically predefined HSV ranges. This allows the system to determine the position of each piece on the board.
